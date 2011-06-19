@@ -1,0 +1,34 @@
+
+= MOTIVATION
+
+ecore is intended to be a mapper of a content repository 
+ran through any other adapter, like Active Record of the 
+RoRails project or any other adapter. It's up to you which 
+one you judge to be useful for you needs.
+
+== Requirenments
+
+ecore needs some kind of database or datastore to call when creating
+something.
+
+== Basic usage
+
+ecore queries objects, let's assume an ActiveRecord database model
+named "Contact" through the Ecore::Node.find() method. This passes on
+the syntax to the actual adapter (adaption of adapter-specific syntax
+will be required) and returns a bunch of objects matching the query.
+There are two parameters making Ecore::Node.find() differ from, let's say
+ActiveRecord::Base.find()
+
+Ecore::Node.find(session, type, query)
+
+The last argument, query, is passed on to ActiveRecord, the session object
+will be used to extract the user's id and include it into the query, so only
+objects where this very user has privileges on will be found.
+
+Just to be clear, there is no Ecore::Node object as such. Nodes are just any
+kind of database tables (or what ever adapter is used) equipped with additional
+attributes (columns) like "hashed_acl, name(required!), created_by, updated_by, 
+created_at, updated_at, deleted_at, versions"
+
+

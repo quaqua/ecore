@@ -1,6 +1,8 @@
 module Ecore
   module Labels
 
+    attr_accessor :primary_label_id
+
     # returns all nodes labeled with current node
     # this method is similar to a hierarchical "children" method
     #
@@ -39,7 +41,7 @@ module Ecore
     #
     def add_label( n, primary=:false )
       raise InvalidNodeError.new('given node is not a node') unless n.class.respond_to?(:acts_as_node)
-      return false unless can_write?
+      return false if !can_write? and !new_record?
       return false if n.id == id
       return false if n.ancestors.map{ |a| a.id }.include?(id)
       label_arr = get_label_arr
@@ -50,6 +52,7 @@ module Ecore
         label_arr << n_field(n)
       end
       self.label_node_ids = label_arr.join(',')
+      n.acl.each_pair{ |k,ace| share( ace.user, ace.privileges ) }
       true
     end
 
@@ -88,6 +91,7 @@ module Ecore
       label_arr = get_label_arr
       label_arr.delete(n_field(n))
       self.label_node_ids = label_arr.join(',')
+      remove_acls( n )
       true
     end
 
@@ -109,6 +113,17 @@ module Ecore
       label_arr.first.split(':')[1].constantize.first(session, :id => label_arr.first.split(':')[0]) if label_arr.size > 0
     end
 
+    # sets given node as the primary label
+    # equal to add_label( node, :primary )
+    #
+    # ==== Parameters
+    #
+    # +node+ - the node this node should get labeled with
+    #
+    def primary_label=( node )
+      add_label( node )
+    end
+
     # returns all predecessor primary_labels (as nodes) until on top
     def ancestors(labels=[])
       ancs = []
@@ -128,6 +143,17 @@ module Ecore
 
     def n_field( n )
       "#{n.id}:#{n.class.name}"
+    end
+
+    def remove_acls( n )
+      n.acl.each_pair do |key, ace|
+        unshare( ace.user )
+      end
+      labels.each do |label|
+        label.acl.each_pair do |key, ace|
+          share( ace.user, ace.privileges )
+        end
+      end
     end
 
   end

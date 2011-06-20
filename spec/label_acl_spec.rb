@@ -34,4 +34,36 @@ describe "Labels ACL" do
     Folder.first(@beta_session, :id => @c.id).id.should == @c.id
   end
 
+  it "should copy over acl when being created with :primary_label_id attribute" do
+    @a.acl.size.should == 2
+    d = Folder.create(:session => @session, :primary_label_id => @a.id, :name => 'd')
+    d.acl.size.should == 2
+  end
+
+  it "should copy over acl when being labeled with something" do
+    e = Folder.create(:session => @session, :name => 'e')
+    e.acl.size.should == 1
+    e.add_label!( @a )
+    e.acl.size.should == 2
+    Folder.first(@beta_session, :name => 'e').id.should == e.id
+  end
+
+  it "should remove acl when being unlabeled" do
+    e = Folder.first(@session, :name => 'e')
+    e.acl.size.should == 2
+    e.remove_label!( @a )
+    e.acl.size.should == 1
+    Folder.first(@beta_session, :name => 'e').should == nil
+  end
+
+  it "should prevent acle form other labels when one label was removed" do
+    e = Folder.first(@session, :name => 'e')
+    @a << e
+    @b << e
+    e.acl.size.should == 2
+    e.remove_label!( @a )
+    e.acl.size.should == 2
+    Folder.first(@beta_session, :name => 'e').id.should == e.id
+  end
+
 end

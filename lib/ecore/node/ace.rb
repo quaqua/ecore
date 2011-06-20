@@ -25,6 +25,15 @@ module Ecore
       self.privileges = options[:privileges]
       raise TypeError.new("user must be given. got #{options.inspect}") unless self.user_id
     end
+
+    # returns the ace's user
+    def user
+      return Ecore::User.anybody if @user_id == Ecore::User.anybody.id
+      return Ecore::User.everybody if @user_id == Ecore::User.everybody.id
+      u = Ecore::User.find_by_id(@user_id)
+      u = Ecore::Group.find_by_id(@user_id) unless u
+      u
+    end
     
     # tells if this ace has read permissions
     def can_read?

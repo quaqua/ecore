@@ -29,6 +29,18 @@ module Ecore
       end
     end
 
+    def check_and_set_primary_label_and_copy_acl
+      if @primary_label_id
+        if plabel = Ecore::Node.first( @session, :id => @primary_label_id )
+          if add_label( plabel, :primary )
+            plabel.acl.each_pair do |user_id, ace|
+              direct_share( ace.user, ace.privileges )
+            end
+          end
+        end
+      end
+    end
+
     def check_write_permission
       raise SecurityTransgression unless can_write?
     end
@@ -39,8 +51,7 @@ module Ecore
 
     def setup_session_user_as_owner
       raise Ecore::MissingSession unless @session or @session.is_a?(Ecore::Session)
-      @acl ||= Acl.new
-      @acl << { :user => @session.user, :privileges => 'rwsd' } if @session
+      direct_share( @session.user, 'rwsd' ) if @session
     end
 
     def setup_created_by
@@ -49,6 +60,15 @@ module Ecore
 
     def unlink_labeled_nodes
       nodes.each { |n| n.remove_label( self ) }
+    end
+
+    private
+
+    # the share method is creating audit log, this causes troubles on create
+    # that's why this method is here for inheriting on create
+    def direct_share( user, privileges )
+      @acl ||= Acl.new
+      @acl << { :user => user, :privileges => privileges }
     end
 
   end

@@ -34,6 +34,7 @@ class << ActiveRecord::Base
     
     before_create :setup_uuid, :setup_session_user_as_owner, :write_acl, :setup_created_by, :update_modifier
     before_update :check_write_permission, :write_acl, :update_modifier
+    before_save   :check_and_set_primary_label_and_copy_acl
     before_destroy :check_delete_permission
     
     # AUDIT

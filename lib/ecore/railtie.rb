@@ -12,7 +12,7 @@ module Ecore
     end
 
     rake_tasks do
-      load File::expand_path('../../tasks/test.rake', __FILE__)
+      load File::expand_path('../../tasks/test.rake', __FILE__) if ENV['RAILS_ENV'] == 'development'
       load File::expand_path('../../tasks/migrate.rake', __FILE__)
     end
 

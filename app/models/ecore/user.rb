@@ -52,7 +52,12 @@ module Ecore
     after_create :audit_log_after_create
     after_update :audit_log_after_update
     before_save :encrypt_password
-    
+
+    def fullname_or_name
+      return fullname if fullname and !fullname.empty?
+      name
+    end
+
     # returns true if this user has role == 'manager'
     def is_admin?
       role == "manager"

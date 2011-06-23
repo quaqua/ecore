@@ -30,7 +30,7 @@ module Ecore
     end
 
     def check_and_set_primary_label_and_copy_acl
-      if @primary_label_id
+      if @primary_label_id and @primary_label_id.size == 36
         if plabel = Ecore::Node.first( @session, :id => @primary_label_id )
           if add_label( plabel, :primary )
             plabel.acl.each_pair do |user_id, ace|

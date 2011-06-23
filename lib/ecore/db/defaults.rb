@@ -19,7 +19,7 @@ module Ecore
           column :name, :string, {:null => false}
           column :deleted_at, :datetime, {:default => nil}
           column :versions, :text
-          column :label_node_ids, :text
+          column :label_node_ids, :text, :default => ""
           column :hashed_acl, :text
           column :position, :integer
           column :updated_at, :datetime

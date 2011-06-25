@@ -9,6 +9,7 @@ module Ecore
       require File::expand_path('../../../app/models/ecore/audit_log', __FILE__ )
       require File::expand_path('../../../app/models/ecore/group', __FILE__ )
       require File::expand_path('../../../app/models/ecore/user', __FILE__ )
+      require File::expand_path('../../../app/models/ecore/data_file', __FILE__ )
       require File::expand_path('../../../app/models/folder', __FILE__ )
     end
 

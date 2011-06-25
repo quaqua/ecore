@@ -24,7 +24,6 @@ class << ActiveRecord::Base
     include Ecore::Labels
     include Ecore::UUIDGenerator
 
-    has_many :audits, :class_name => "Ecore::AuditLog", :as => :auditable
     belongs_to :creator, :class_name => "Ecore::User", :foreign_key => :created_by
     belongs_to :updater, :class_name => "Ecore::User", :foreign_key => :updated_by
     
@@ -42,6 +41,10 @@ class << ActiveRecord::Base
     after_create :audit_log_after_create
     after_update :audit_log_after_update
     after_destroy :audit_log_after_destroy
-    
+   
+    def audits
+      Ecore::Audit.where(:node_id => id)
+    end
+
   end
 end

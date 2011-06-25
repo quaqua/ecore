@@ -10,17 +10,17 @@ module Ecore
 
     def audit_log_after_create
       return unless @session
-      audits.create(:action => "created", :node_name => name, :user => @session.user, :summary => @audit_summary) 
+      Ecore::AuditLog.create(:action => "created", :tmpnode => self, :tmpuser => @session.user, :summary => @audit_summary) 
     end
 
     def audit_log_after_update
       return unless @session
-      audits.create(:action => "modified", :node_name => name, :user => @session.user, :summary => @audit_summary) 
+      Ecore::AuditLog.create(:action => "modified", :tmpnode => self, :tmpuser => @session.user, :summary => @audit_summary) 
     end
 
     def audit_log_after_destroy
       return unless @session
-      audits.create(:action => "deleted", :user => @session.user, :node_name => name, :summary => @audit_summary) 
+      Ecore::AuditLog.create(:action => "deleted", :tmpuser => @session.user, :tmpnode => self, :summary => @audit_summary) 
     end
 
     def write_acl

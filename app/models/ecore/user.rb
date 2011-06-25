@@ -40,8 +40,6 @@ module Ecore
     
     attr_accessor :password, :session, :send_confirmation, :audit_summary, :skip_auditor
     
-    has_many :audits, :class_name => "Ecore::AuditLog", :as => :auditable
-   
     validates_presence_of      :name
     validates_uniqueness_of    :email, :if => :email?
     validates_uniqueness_of    :name, :if => :name?
@@ -53,6 +51,10 @@ module Ecore
     after_create :audit_log_after_create
     after_update :audit_log_after_update
     before_save :encrypt_password
+
+    def audits
+      Ecore::AuditLog.where(:user_id => id)
+    end
 
     def fullname_or_name
       return fullname if fullname and !fullname.empty?
@@ -165,12 +167,12 @@ module Ecore
     end
             
     def audit_log_after_create
-      audits.create(:action => "created", :node_name => name, :summary => @audit_summary) 
+      Ecore::AuditLog.create(:action => "created", :tmpnode => self, :summary => @audit_summary) 
     end
     
     def audit_log_after_update
       return if @skip_auditor
-      audits.create(:action => "updated", :node_name => name, :summary => @audit_summary)
+      Ecore::AuditLog.create(:action => "updated", :tmpnode => self, :summary => @audit_summary)
     end
   
   end

@@ -29,6 +29,11 @@ module Ecore
         @registered_nodes << class_name unless @registered_nodes.include?( class_name )
       end
 
+      # returns all registered nodes
+      def registered
+        @registered_nodes ||= []
+      end
+
 
       # finds all nodes registered with the Ecore::Node.register method
       def find( session, attrs )

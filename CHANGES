@@ -1,0 +1,3 @@
+Version 1.0.2 - 2011-06-25
+  - Ecore::DataFile comes natively with ecore
+  - Ecore::AuditLog has changed references in favour of working hand-written mappers

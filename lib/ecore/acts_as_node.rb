@@ -36,11 +36,12 @@ class << ActiveRecord::Base
     before_update :check_write_permission, :write_acl, :update_modifier
     before_save   :check_and_set_primary_label_and_copy_acl
     before_destroy :check_delete_permission
+    after_destroy :unlink_labeled_nodes
     
     # AUDIT
     after_create :audit_log_after_create
     after_update :audit_log_after_update
-    after_destroy :audit_log_after_destroy, :unlink_labeled_nodes
+    after_destroy :audit_log_after_destroy
     
   end
 end

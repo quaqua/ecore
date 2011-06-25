@@ -11,7 +11,7 @@ module Ecore
     validates_uniqueness_of :name
     
     before_create :setup_uuid
-    before_destroy :delete_group_ids
+    after_destroy :delete_group_ids
     
     # adds a user to this group
     # user object needs to be saved
@@ -58,7 +58,7 @@ module Ecore
     private
     
     def delete_group_ids
-      users.each { |user| user.remove_group(self) }
+      users.each { |user| user.remove_group!(self) }
     end
     
   end

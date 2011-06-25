@@ -41,7 +41,8 @@ module Ecore
     attr_accessor :password, :session, :send_confirmation, :audit_summary, :skip_auditor
     
     has_many :audits, :class_name => "Ecore::AuditLog", :as => :auditable
-    
+   
+    validates_presence_of      :name
     validates_uniqueness_of    :email, :if => :email?
     validates_uniqueness_of    :name, :if => :name?
     validates_format_of :name, :with => /^([a-z0-9A-Z\_\-\.]+)$/i, :if => :name?

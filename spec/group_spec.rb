@@ -40,7 +40,15 @@ describe "Ecore::Group" do
     g.remove_user!( u )
     g.users.size.should == 0
     u.groups.size.should == 0
+  end
 
+  it "should remove a group reference from a user if group is deleted" do
+    u = Ecore::User.find_by_name('alpha')
+    g = Ecore::Group.find_by_name('alphagroup')
+    g << u
+    u.groups.size.should == 1
+    g.destroy
+    Ecore::User.find_by_name('alpha').groups.size.should == 0
   end
 
 end

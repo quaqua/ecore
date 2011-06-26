@@ -20,6 +20,7 @@ module Ecore
 
     # saves @file to datastore
     def save_to_datastore
+      return unless @file
       FileUtils::mkdir_p(File::dirname(filename)) unless File::exists?(File::dirname(filename))
       File::open(filename, "wb") { |f| f.write(@file.read) }
     end

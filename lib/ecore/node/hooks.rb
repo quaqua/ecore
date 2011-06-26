@@ -20,7 +20,7 @@ module Ecore
 
     def audit_log_after_destroy
       return unless @session
-      Ecore::AuditLog.create(:action => "deleted", :tmpuser => @session.user, :tmpnode => self, :summary => @audit_summary) 
+      Ecore::AuditLog.create(:action => "deleted", :tmpuser => @session.user, :tmpnode => self, :summary => (@audit_summary || name)) 
     end
 
     def write_acl

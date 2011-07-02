@@ -4,7 +4,7 @@
 module Ecore
   class Railtie < Rails::Railtie
 
-    initializer "ecore.initialize" do |app|
+    initializer "ecore_initialize" do |app|
       require File::expand_path('../init',__FILE__)
       require File::expand_path('../../../app/models/ecore/audit_log', __FILE__ )
       require File::expand_path('../../../app/models/ecore/group', __FILE__ )

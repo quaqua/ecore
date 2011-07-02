@@ -6,16 +6,48 @@ module Ecore
     # returns all nodes labeled with current node
     # this method is similar to a hierarchical "children" method
     #
+    # ==== Paramters
+    #
+    # +options+ - options hash containing only :type => ClassName or "class_name"
+    #
     def nodes(attrs={})
-      if attrs.is_a?(Hash) and attrs.has_key?(:type)
-        attrs[:type].constantize.find(session, "label_node_ids LIKE '%#{id}%'")
+      if attrs.is_a?(Hash) and !attrs[:type].blank?
+        const = attrs[:type]
+        const = const.classify.constantize if const.is_a?(String)
+        const.find(session, "label_node_ids LIKE '%#{id}%'")
       else
         Ecore::Node.find(session, "label_node_ids LIKE '%#{id}%'")
-        #.inject(NodeArray.new) do |arr,n|
-        #  n.session = session
-        #  arr << n
-        #end
       end
+    end
+
+    # finds all nodes within the current node (similar to find method, but
+    # not session is required). Only :conditions => "STRING" is allowed
+    #
+    # ==== Parameters
+    #
+    # +find_options+ - like in active_record plus 'type' which will be
+    # filtered out before passed on to active_record an only nodes of that
+    # type will be looked up then. node_type can only take one class
+    # 
+    # e.g.:
+    # @node.find(:type => Contact, :name => "strauss")
+    #
+    def find(options={})
+      ns = NodeArray.new
+      type = options.delete(:type)
+      nodes(:type => type).each do |n|
+        if options.size > 0 and options.is_a?(Hash)
+          met = true
+          options.each_pair do |key,value|
+            met = false if n.send("#{key}") != value
+          end
+          ns << n if met
+        else
+          ns << n
+        end
+        ns |= n.find(options.merge(:type => type))
+      end
+      ns
     end
 
     # returns all nodes in a Ecore::NodeArray this node is labeled with

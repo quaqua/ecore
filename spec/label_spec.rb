@@ -70,4 +70,37 @@ describe "Labels" do
     d.labels.first.id.should == @a.id
   end
 
+  it "should find subnodes of a node via find method" do
+    d = Folder.find(@session, :name => 'd').first
+    x = Folder.create(:session => @session, :name => 'x')
+    y = Folder.create(:session => @session, :name => 'y')
+    z = Folder.create(:session => @session, :name => 'z')
+    z1 = Folder.create(:session => @session, :name => 'z')
+    d << x
+    x << y
+    x << z
+    Folder.find(@session, :name => 'z').size.should == 2
+    d.find(:name => 'z').size.should == 1
+  end
+
+  it "should find subnodes of a node and filter by node_types" do
+    d = Folder.find(@session, :name => 'd').first
+    d.find(:type => Folder, :name => 'z').size.should == 1
+  end
+
+  it "should find subnodes of a node and filter by node_types if node_types is a string" do
+    d = Folder.find(@session, :name => 'd').first
+    d.find(:type => "folder", :name => 'z').size.should == 1
+  end
+
+  it "should find all subnodes of a specified type" do
+    d = Folder.find(@session, :name => 'd').first
+    d.find(:type => Folder).size.should == 3
+  end
+
+  it "should find only direct subnodes with nodes method" do
+    d = Folder.find(@session, :name => 'd').first
+    d.nodes(:type => Folder).size.should == 1
+  end
+
 end

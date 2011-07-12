@@ -10,7 +10,9 @@ module Ecore
           tmp_order = self.class.new(new_order)
           ( new_order << node ; next ) if node == self.first
           new_order.each_with_index do |n,i|
-            if eval("node.#{clean_a} < n.#{clean_a}")
+            evalstr = "node.#{clean_a} && n.#{clean_a} && node.#{clean_a} < n.#{clean_a}"
+            evalstr = "node.#{clean_a} && n.#{clean_a} && node.#{clean_a}.downcase < n.#{clean_a}.downcase" if node.send(clean_a).is_a?(String)
+            if eval(evalstr)
               tmp_order.insert(i,node)
               break
             elsif tmp_order.size-1 == i

@@ -52,6 +52,8 @@ module Ecore
     after_update :audit_log_after_update
     before_save :encrypt_password
 
+    has_many :comments
+
     def audits
       Ecore::AuditLog.where(:user_id => id)
     end

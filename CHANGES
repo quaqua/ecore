@@ -1,6 +1,5 @@
-Version 1.0.2 - 2011-06-25
-  - Ecore::DataFile comes natively with ecore
-  - Ecore::AuditLog has changed references in favour of working hand-written mappers
+Version 1.0.4 - 2011-07-12
+  - Comments added
 
 Version 1.0.3 - 2011-07-02
   - Ecore::Labels extended. @node.find(:key1 => cond1, :key2 => cond2) and @node.find(:type => Contact, :key1 => cond) ...
@@ -9,3 +8,7 @@ Version 1.0.3 - 2011-07-02
     no caching of the results yet
     Still: @contact_folder.find(:type => Contact)  gives you a great tool to filter for nodes within all the depth of the hierarchy
     and look for those nodes. In conjunction with the folder's :default_controller attribute, this can be very powerful
+
+Version 1.0.2 - 2011-06-25
+  - Ecore::DataFile comes natively with ecore
+  - Ecore::AuditLog has changed references in favour of working hand-written mappers

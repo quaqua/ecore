@@ -29,4 +29,10 @@ describe "Comment" do
     comment.user.id.should == @alpha.id
   end
 
+  it "should delete any comment if the node is deleted" do
+    Comment.count.should == 1
+    @f.destroy
+    Comment.count.should == 0
+  end
+
 end

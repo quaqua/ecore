@@ -174,7 +174,7 @@ module Ecore
     
     def audit_log_after_update
       return if @skip_auditor
-      Ecore::AuditLog.create(:action => "updated", :tmpnode => self, :summary => @audit_summary)
+      Ecore::AuditLog.create(:action => "updated", :tmpnode => nil, :tmpuser => self, :summary => @audit_summary)
     end
   
   end

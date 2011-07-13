@@ -4,7 +4,8 @@ class CreateComments < ActiveRecord::Migration
       t.string      :user_id, :limit => 36
       t.string      :node_id, :limit => 36
       t.string      :node_type
-      t.text      :body_text
+      t.text        :body_text
+      t.text        :hashed_acl
       t.timestamps
     end
     add_index :comments, :user_id

@@ -11,6 +11,7 @@ module Ecore
       require File::expand_path('../../../app/models/ecore/user', __FILE__ )
       require File::expand_path('../../../app/models/ecore/data_file', __FILE__ )
       require File::expand_path('../../../app/models/folder', __FILE__ )
+      require File::expand_path('../../../app/models/comment', __FILE__ )
     end
 
     rake_tasks do

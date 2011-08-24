@@ -103,4 +103,9 @@ describe "Labels" do
     d.nodes(:type => Folder).size.should == 1
   end
 
+  it "should find only labels of type Folder" do
+    z = Folder.first(@session, :name => 'z')
+    z.labels(:type => Folder).size.should == 1
+  end
+
 end

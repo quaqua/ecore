@@ -65,9 +65,9 @@ describe "Labels" do
     @a.labels.first.id.should == @b.id
   end
 
-  it "should set primary label on creation" do
-    d = Folder.create(:session => @session, :primary_label_id => @a.id, :name => 'd')
-    d.labels.first.id.should == @a.id
+  it "should set parent on creation" do
+    d = Folder.create(:session => @session, :parent_node_id => @a.id, :name => 'd')
+    d.parent.id.should == @a.id
   end
 
   it "should find subnodes of a node via find method" do

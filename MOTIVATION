@@ -1,5 +1,5 @@
-
 = MOTIVATION
+
 
 ecore is intended to be a mapper of a content repository 
 ran through any other adapter, like Active Record of the 

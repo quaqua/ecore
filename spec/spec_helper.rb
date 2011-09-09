@@ -32,6 +32,10 @@ def load_schema
   require File.dirname(__FILE__) + '/../init'
 end
 
+def create_folder(name)
+  Folder.create!(:name => name, :session => @session)
+end
+
 require 'rspec'
 require 'rspec/autorun'
 require File::expand_path('../../app/models/folder',__FILE__)

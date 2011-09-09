@@ -16,11 +16,13 @@ module Ecore
       module Schema
         def ecore_node
           column :id, :string, {:null => false, :primary => true, :limit => 36}
+          column :path, :text
           column :name, :string, {:null => false}
           column :deleted_at, :datetime, {:default => nil}
           column :versions, :text
           column :label_node_ids, :text, :default => ""
           column :hashed_acl, :text
+          column :starred, :boolean
           column :position, :integer
           column :updated_at, :datetime
           column :created_at, :datetime

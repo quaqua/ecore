@@ -34,9 +34,9 @@ describe "Labels ACL" do
     Folder.first(@beta_session, :id => @c.id).id.should == @c.id
   end
 
-  it "should copy over acl when being created with :primary_label_id attribute" do
+  it "should copy over acl when being created with :parent_node_id attribute" do
     @a.acl.size.should == 2
-    d = Folder.create(:session => @session, :primary_label_id => @a.id, :name => 'd')
+    d = Folder.create(:session => @session, :parent_node_id => @a.id, :name => 'd')
     d.acl.size.should == 2
   end
 

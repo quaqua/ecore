@@ -29,15 +29,20 @@ module Ecore
       end
     end
 
-    def check_and_set_primary_label_and_copy_acl
-      if @primary_label_id and @primary_label_id.size == 36
-        if plabel = Ecore::Node.first( @session, :id => @primary_label_id )
-          if add_label( plabel, :primary )
-            plabel.acl.each_pair do |user_id, ace|
-              direct_share( ace.user, ace.privileges )
-            end
+    def check_and_set_path_and_copy_acl
+      if @parent_node_id
+        if parent = Ecore::Node.first( @session, :id => @parent_node_id )
+          self.path = "#{parent.path}#{parent.id}/"
+          parent.acl.each_pair do |user_id, ace|
+            direct_share( ace.user, ace.privileges )
           end
         end
+      end
+    end
+
+    def set_default_path
+      unless path
+        self.path = '/'
       end
     end
 

@@ -7,6 +7,7 @@ describe "PathHandler" do
     Ecore::User.all.map(&:destroy)
     @alpha = Ecore::User.create!(:name => 'alpha', :password => 'alpha')
     @session = Ecore::Session.new(:name => 'alpha', :password => 'alpha')
+    @beta = Ecore::User.create!(:name => 'beta', :password => 'beta')
     @a = Folder.create(:session => @session, :name => 'a')
     @b = Folder.create(:session => @session, :name => 'b')
     @c = Folder.create(:session => @session, :name => 'c')
@@ -20,7 +21,7 @@ describe "PathHandler" do
   it "should make the new folder child of @a" do
     f = create_folder("f2")
     @a.children.size.should == 0
-    (@a.children << f).should == true
+    @a.add_child(f).should == true
     f = Folder.first(@session, :id => f.id)
     f.parent.id.should == @a.id
     @a.children.size.should == 1
@@ -32,6 +33,25 @@ describe "PathHandler" do
     f.parent = @a
     f.save
     f.parent.id.should == @a.id
+  end
+  
+  it "moves a node path" do
+    f4 = create_folder('f4')
+    f5 = create_folder('f5')
+    f6 = create_folder('f6')
+    f6beta = Folder.find( Ecore::Session.new(:name => 'beta', :password => 'beta'), :id => f6 ).size.should == 0
+    f4.share(@beta,'rwsd')
+    f4.add_child f5
+    f5.add_child f6
+    f6beta = Folder.find( Ecore::Session.new(:name => 'beta', :password => 'beta'), :id => f6 ).size.should == 1
+  end
+  
+  it "returns parent also as a label" do
+    f7 = create_folder("f7")
+    f8 = create_folder("f8")
+    f7.add_child(f8)
+    f7.nodes.size.should == 1
+    f8.labels.first.id.should == f7.id
   end
 
 end

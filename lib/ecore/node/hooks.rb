@@ -38,6 +38,7 @@ module Ecore
           end
         end
       end
+      self.path = path.sub("/#{id}/","") if path && path.include?("#{id}")
     end
 
     def set_default_path

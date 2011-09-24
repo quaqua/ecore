@@ -4,7 +4,7 @@ require 'digest/sha2'
 describe "Ecore::User" do
 
   before(:all) do
-    Ecore::User.all.map(&:destroy)
+    Ecore::User.all.map(&:delete)
     Ecore::Group.all.map(&:destroy)
   end
   

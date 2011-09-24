@@ -50,6 +50,7 @@ module Ecore
             return node
           end
         end
+        nil
       end
 
     end

@@ -36,6 +36,7 @@ module Ecore
           parent.acl.each_pair do |user_id, ace|
             direct_share( ace.user, ace.privileges )
           end
+          add_label( parent )
         end
       end
       self.path = path.sub("/#{id}/","") if path && path.include?("#{id}")

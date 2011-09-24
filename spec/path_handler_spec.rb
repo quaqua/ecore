@@ -53,5 +53,17 @@ describe "PathHandler" do
     f7.nodes.size.should == 1
     f8.labels.first.id.should == f7.id
   end
+  
+  it "also removes path if label was removed" do
+    f9 = create_folder("f9")
+    f10 = create_folder("f10")
+    f9.add_child(f10).should == true
+    f10.labels.first.id.should == f9.id
+    f10.path.should == "#{f9.path}#{f9.id}/"
+    f10.remove_label(f9).should == true
+    f10.labels.size.should == 0
+    f10.path.should == "/"
+    
+  end
 
 end

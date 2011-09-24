@@ -125,6 +125,7 @@ module Ecore
       label_arr.delete(n_field(n))
       self.label_node_ids = label_arr.join(',')
       remove_acls( n )
+      self.path = "/" if path.split('/').last == n.id
       true
     end
 

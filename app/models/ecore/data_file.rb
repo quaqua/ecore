@@ -2,7 +2,7 @@ require 'fileutils'
 
 module Ecore
   class DataFile < ActiveRecord::Base
-    cattr_accessor :path
+    cattr_accessor :file_path
 
     acts_as_node
 
@@ -13,7 +13,7 @@ module Ecore
 
     # returns full filename
     def filename
-      ::File::join(self.class.path,id,id)
+      ::File::join(self.class.file_path,id,id)
     end
 
     private

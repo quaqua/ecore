@@ -46,7 +46,7 @@ module Ecore
     
     # adds a new child node to the curren tnode
     def add_child(node)
-      acl.each_pair{ |k,ace| node.share( ace.user, ace.privileges ) }
+      acl.each_pair{ |k,ace| node.share( k, ace.privileges ) }
       node.add_label(self)
       node.update_attributes(:path => "#{path}#{id}/")
     end

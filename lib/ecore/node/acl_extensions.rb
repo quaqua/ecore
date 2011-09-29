@@ -60,10 +60,14 @@ module Ecore
     # e.g.:
     # node.share( user, 'rw' )
     def share( user, privileges )
-      if (user.is_a?(Ecore::User) or user.is_a?(Ecore::Group)) and can_share?
+      if user.is_a?(String)
+        acl << { :user_id => user, :privileges => privileges }
+        nodes.each{ |n| n.share!( user, privileges ) if n.can_share? }
+        return true
+      elsif (user.is_a?(Ecore::User) or user.is_a?(Ecore::Group)) and can_share?
         acl << { :user => user, :privileges => privileges }
         Ecore::AuditLog.create(:action => "shared", :tmpnode => self, :tmpuser => @session.user, :summary => "#{user.name} (#{user.class.name}) #{privileges}")
-        nodes.each{ |n| n.share!( user, privileges ) if n.can_share? }
+        nodes.each{ |n| n.share!( user.id, privileges ) if n.can_share? }
         return true
       end
       false

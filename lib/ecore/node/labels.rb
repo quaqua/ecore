@@ -77,6 +77,12 @@ module Ecore
       return false if !can_write? and !new_record?
       return false if n.id == id
       return false if n.ancestors.map{ |a| a.id }.include?(id)
+      simple_add_label( n, primary )
+      n.acl.each_pair{ |k,ace| share( k, ace.privileges ) }
+      true
+    end
+
+    def simple_add_label( n, primary=:false )
       label_arr = get_label_arr
       label_arr.delete(n_field(n))
       if primary == :primary
@@ -85,8 +91,6 @@ module Ecore
         label_arr << n_field(n)
       end
       self.label_node_ids = label_arr.join(',')
-      n.acl.each_pair{ |k,ace| share( ace.user, ace.privileges ) }
-      true
     end
 
     # adds a label to this node and saves it
@@ -185,7 +189,7 @@ module Ecore
       end
       labels.each do |label|
         label.acl.each_pair do |key, ace|
-          share( ace.user, ace.privileges )
+          share( key, ace.privileges )
         end
       end
     end

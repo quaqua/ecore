@@ -34,10 +34,12 @@ module Ecore
         if parent = Ecore::Node.first( @session, :id => @parent_node_id )
           self.path = "#{parent.path}#{parent.id}/"
           parent.acl.each_pair do |user_id, ace|
-            direct_share( ace.user, ace.privileges )
+            @acl ||= Acl.new
+            @acl << { :user_id => user_id, :privileges => ace.privileges }
           end
-          add_label( parent )
+          simple_add_label( parent )
         end
+        @parent_node_id = nil
       end
       self.path = path.sub("/#{id}/","") if path && path.include?("#{id}")
     end
@@ -75,7 +77,7 @@ module Ecore
     # that's why this method is here for inheriting on create
     def direct_share( user, privileges )
       @acl ||= Acl.new
-      @acl << { :user => user, :privileges => privileges }
+      @acl << { :user_id => user.id, :privileges => privileges }
     end
 
   end

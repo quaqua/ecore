@@ -19,9 +19,15 @@ module Ecore
     #                                 # permissions to this acl
     # acl << user, 'rwsd'        # adds user object 
     def <<(options)
-      user, privileges = options[:user], options[:privileges]
-      raise PrivilegesTransgression.new("anybody can't get more than write permissions") if [User.anybody.id,User.everybody.id].include?(user.id) and privileges != 'r'
-      self[user.id] = Ace.new(:user_id => user.id, :privileges => privileges)
+      if options.has_key?(:user)
+        user, privileges = options[:user], options[:privileges]
+        raise PrivilegesTransgression.new("anybody can't get more than write permissions") if [User.anybody.id,User.everybody.id].include?(user.id) and privileges != 'r'
+        self[user.id] = Ace.new(:user_id => user.id, :privileges => privileges)
+      elsif options.has_key?(:user_id)
+        user_id, privileges = options[:user_id], options[:privileges]
+        raise PrivilegesTransgression.new("anybody can't get more than write permissions") if [User.anybody.id,User.everybody.id].include?(user_id) and privileges != 'r'
+        self[user_id] = Ace.new(:user_id => user_id, :privileges => privileges)
+      end
     end
     alias_method :push, :<<
     

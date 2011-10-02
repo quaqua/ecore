@@ -83,6 +83,7 @@ module Ecore
     end
 
     def simple_add_label( n, primary=:false )
+      return false if n.id == id
       label_arr = get_label_arr
       label_arr.delete(n_field(n))
       if primary == :primary

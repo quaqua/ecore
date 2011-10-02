@@ -30,18 +30,21 @@ module Ecore
     end
 
     def check_and_set_path_and_copy_acl
-      if @parent_node_id
-        if parent = Ecore::Node.first( @session, :id => @parent_node_id )
-          self.path = "#{parent.path}#{parent.id}/"
-          parent.acl.each_pair do |user_id, ace|
+      if !@parent_node_id.blank? && (parent.nil? || (parent && parent.id != @parent_node_id)) && (@parent_node_id != id)
+        if new_parent = Ecore::Node.first( @session, :id => @parent_node_id )
+          self.path = "#{new_parent.path}#{new_parent.id}/"
+          new_parent.acl.each_pair do |user_id, ace|
             @acl ||= Acl.new
             @acl << { :user_id => user_id, :privileges => ace.privileges }
           end
-          simple_add_label( parent )
+          simple_add_label( new_parent )
+          if new_record? and respond_to?(:color) and new_parent.respond_to?(:color)
+            self.color = new_parent.color
+          end
         end
         @parent_node_id = nil
       end
-      self.path = path.sub("/#{id}/","") if path && path.include?("#{id}")
+      self.path = path.sub("#{id}","").sub("//","/") if path && path.include?("#{id}")
     end
 
     def set_default_path

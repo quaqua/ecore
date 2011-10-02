@@ -53,7 +53,7 @@ module Ecore
     
     # returns the node's parent or nil if node has no parent
     def parent
-      return nil if path == "/"
+      return nil if path.blank? or path == "/"
       Ecore::Node.first( session, :id => "#{path[path[0..-2].rindex('/')+1..-2]}" )
     end
 

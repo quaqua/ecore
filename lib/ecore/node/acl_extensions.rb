@@ -32,6 +32,7 @@ module Ecore
     # checks, if given user has read access for this
     # node or for parent node
     def can_read?(user=@session.user)
+      return true if user.name == 'system'
       effective_acl.can_read?(user)
     end
 
@@ -42,16 +43,19 @@ module Ecore
 
     # alias for acl.can_write?(@session.user)
     def can_write?(user=@session.user)
+      return true if user.name == 'system'
       effective_acl.can_write?(user)
     end
 
     # alias for acl.can_share?(@session.user)
     def can_share?(user=@session.user)
+      return true if user.name == 'system'
       effective_acl.can_share?(user)
     end
 
     # alias for acl.can_delete?(@session.user)
     def can_delete?(user=@session.user)
+      return true if user.name == 'system'
       effective_acl.can_delete?(user)
     end
 

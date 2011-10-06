@@ -10,9 +10,9 @@ module Ecore
     # and then destroy!
     def recursive_destroy
       Ecore::Node.find( session, "path LIKE '#{path}#{id}/%'" ).each do |child|
-        child.destroy!
+        child.destroy
       end
-      destroy!
+      destroy
     end
 
     # returns a NodeArray of child nodes which are associated with

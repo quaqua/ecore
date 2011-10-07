@@ -14,7 +14,7 @@ class << ActiveRecord::Base
   
   def acts_as_node( options={} )
 
-    Ecore::Node.register name
+    Ecore::Node.register(name) unless options[:skip_registration]
 
     # overwrite default ActiveRecord first and find methods by passing session user
     # object and privileges to actual query

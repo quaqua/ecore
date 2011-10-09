@@ -105,6 +105,9 @@ describe "Labels" do
 
   it "should find only labels of type Folder" do
     z = Folder.first(@session, :name => 'z')
+    z.labels.size.should == 1
+    z.labels(:type => "Folder").size.should == 1
+    z.labels(:type => ["Folder"]).size.should == 1
     z.labels(:type => Folder).size.should == 1
   end
 

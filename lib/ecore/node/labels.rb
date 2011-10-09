@@ -128,7 +128,6 @@ module Ecore
     # +node+ - the node which should be removed
     #
     def remove_label( n )
-      raise InvalidNodeError.new('given node is not a node') unless n.class.respond_to?(:acts_as_node)
       return false unless can_share?
       label_arr = get_label_arr
       label_arr.delete(n_field(n))

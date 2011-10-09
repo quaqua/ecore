@@ -55,7 +55,9 @@ module Ecore
     def labels(options={})
       return NodeArray.new if new_record? 
       get_label_arr.inject(NodeArray.new) do |arr,label_field|
-        next if options and options[:type] and ((options[:type].is_a?(String) && options[:type] != label_field.split(':')[1]) or (options[:type].is_a?(Array) && options[:type].include?(label_field.split(':')[1])))
+        next if options and options[:type] and ((options[:type].is_a?(ActiveRecord::Base) && options[:type].name != label_field.split(':')[1]) or 
+                                                (options[:type].is_a?(String) && options[:type] != label_field.split(':')[1]) or 
+                                                (options[:type].is_a?(Array) && options[:type].include?(label_field.split(':')[1])))
         if n = label_field.split(':')[1].constantize.first(session, :id => label_field.split(':')[0])
           n.session = session
           arr << n

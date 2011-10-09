@@ -58,7 +58,7 @@ module Ecore
         if !options[:type] or 
           (options[:type].is_a?(String) && options[:type] == label_field.split(':')[1]) or 
           (options[:type].is_a?(Array) && options[:type].include?(label_field.split(':')[1])) or
-          (options[:type] < ActiveRecord::Base && options[:type].name == label_field.split(':')[1])
+          (options[:type].respond_to?(:acts_as_node) && options[:type].name == label_field.split(':')[1])
           if n = label_field.split(':')[1].constantize.first(session, :id => label_field.split(':')[0])
             n.session = session
             arr << n

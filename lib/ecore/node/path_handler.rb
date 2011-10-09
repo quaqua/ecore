@@ -34,6 +34,7 @@ module Ecore
     end
     
     # moves a node (including all it's subnodes to a new destination
+    # this method is not ready to be used (it omitts labels and causes dead links)
     def move_to(new_path)
       nodes = Ecore::Node.find( @session, "path LIKE '%#{path}#{id}/%'" )
       nodes.each do |n|

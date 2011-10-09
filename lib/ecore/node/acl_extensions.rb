@@ -70,7 +70,8 @@ module Ecore
         return true
       elsif (user.is_a?(Ecore::User) or user.is_a?(Ecore::Group)) and can_share?
         acl << { :user => user, :privileges => privileges }
-        Ecore::AuditLog.create(:action => "shared", :tmpnode => self, :tmpuser => @session.user, :summary => "#{user.name} (#{user.class.name}) #{privileges}")
+        @audit_action = "shared"
+        @audit_summary = "#{user.name} (#{user.class.name}) #{privileges}"
         nodes.each{ |n| n.share!( user.id, privileges ) if n.can_share? }
         return true
       end
@@ -93,7 +94,8 @@ module Ecore
       if (user.is_a?(Ecore::User) or user.is_a?(Ecore::Group)) and can_share? and acl.has_key?( user.id )
         return false if user.id == session.user.id
         acl.delete(user.id)
-        Ecore::AuditLog.create(:action => "unshared", :tmpnode => self, :tmpuser => @session.user, :summary => "#{user.name} (#{user.class.name})")
+        @audit_action = "unshared"
+        @audit_summary = "#{user.name} (#{user.class.name})"
         nodes.each{ |n| n.unshare!( user ) if n.can_share? }
         return true
       end

@@ -30,7 +30,7 @@ class << ActiveRecord::Base
     belongs_to :updater, :class_name => "Ecore::User", :foreign_key => :updated_by
     has_many :comments, :as => :node, :order => "created_at DESC", :dependent => :destroy
     
-    attr_accessor   :session, :audit_summary
+    attr_accessor   :session, :audit_summary, :audit_action
     
     validates_presence_of :name
     

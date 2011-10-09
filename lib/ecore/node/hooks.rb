@@ -45,6 +45,7 @@ module Ecore
         @parent_node_id = nil
       end
       self.path = path.sub("#{id}","").sub("//","/") if path && path.include?("#{id}")
+      self.label_node_ids = "" if label_node_ids.nil?
     end
 
     def set_default_path

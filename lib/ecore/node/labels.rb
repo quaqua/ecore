@@ -11,12 +11,17 @@ module Ecore
     # +options+ - options hash containing only :type => ClassName or "class_name"
     #
     def nodes(attrs={})
+      cond = "label_node_ids LIKE '%#{id}%'"
+      (cond << " " << attrs[:conditions]) if attrs[:conditions] and attrs[:conditions].is_a?(String)
+      options = {:conditions => cond}
+      options[:order] = attrs[:order] if attrs[:order]
+      options[:limit] = attrs[:limit] if attrs[:limit]
       if attrs.is_a?(Hash) and !attrs[:type].blank?
         const = attrs[:type]
         const = const.classify.constantize if const.is_a?(String)
-        const.find(session, "label_node_ids LIKE '%#{id}%'")
+        const.find(session, options)
       else
-        Ecore::Node.find(session, "label_node_ids LIKE '%#{id}%'")
+        Ecore::Node.find(session, options)
       end
     end
 

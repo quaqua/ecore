@@ -12,7 +12,7 @@ module Ecore
     #
     def nodes(attrs={})
       cond = "label_node_ids LIKE '%#{id}%'"
-      (cond << " AND " << attrs[:conditions]) if attrs[:conditions] and attrs[:conditions].is_a?(String)
+      (cond << " AND (" << attrs[:conditions] << ")") if attrs[:conditions] and attrs[:conditions].is_a?(String)
       options = {:conditions => cond}
       options[:order] = attrs[:order] if attrs[:order]
       options[:limit] = attrs[:limit] if attrs[:limit]

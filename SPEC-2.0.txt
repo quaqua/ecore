@@ -1,0 +1,77 @@
+
+
+
+SPECIFICATIONS for ecore
+Version 2.0
+
+
+
+INTRODUCTION
+============
+ecore is an enhanced content repository mapping SQL databases.
+The main purpose of ecore is to abstract schema-less node operations
+for the underlying Sequel SQL layer.
+
+
+EXAMPLES
+========
+
+getting a node
+
+Start a session:
+
+  session = Ecore::Session.new(:name => 'user', :password => 'password')
+
+Query for all nodes with name='test':
+
+  session.nodes.find(:types => :all).where(:name => 'test').count
+
+  or to filter for :types => MyNodeClass you can also write:
+
+  MyNodeClass.where(:name => 'test').count
+
+Query for node with id 'aw3eF':
+
+  ecore_node = session.nodes.get('aw3eF')
+
+Insert a new node:
+
+  ecore_node.save(session.nodes)
+
+Update an existing node:
+
+  ecore_node.update( json_update_variables )
+
+  or e.g. from Rails form:
+
+  ecore_node.update( hash_params )
+
+Delete a node
+
+  ecore_node.delete
+
+
+Declaring a new NodeClass
+
+  class MyNode
+    include Ecore::Node
+    attribute :name, :string, :default => 'default name', :index => true
+    attribute :due_at, :datetime, :default => Time.now
+  end
+
+This creates a node declaration (sets up tables in database) 
+with :name and :due_at attributes. It is essential to define
+:index options for frequently used attributes in order not to
+run into scaling issues.
+
+If extending a node class with new attributes, one can easily 
+just add new attributes to the node declaration class. Old
+attributes are NOT deleted and will be available until removed
+with the MyNode::cleanup_schema
+
+If an attribute changes it's datatype, one has to remove it first,
+run MyNode::cleanup_schema and then define the new node. Alternatively
+the SQL entry can directly be modified. Attention with keeping same
+datatypes in the database and the node declaration class.
+
+

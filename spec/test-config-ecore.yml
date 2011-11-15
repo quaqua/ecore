@@ -1,0 +1,9 @@
+logger:
+  level: DEBUG
+
+db:
+  database: "test.sqlite3"
+
+users:
+  default_role: "user"
+  session_timeout_minutes: 20

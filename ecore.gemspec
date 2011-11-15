@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["thorsten zerha"]
   s.email       = ["quaqua@tastenwerk.com"]
   s.homepage    = ""
-  s.summary     = %q{ecore is a content repository mapper for RubyOnRails, ActiveRecord}
-  s.description = %q{ecore is a content repository allowing you to deal with objects as nodes, having privileges and getting cross-linked to each other, regardless of it's kind}
+  s.summary     = %q{a document (content) repository based on SQL written in ruby}
+  s.description = %q{a document repository using SQL written in ruby}
 
   s.rubyforge_project = "ecore"
 
@@ -17,11 +17,12 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
-   
+
+  s.add_development_dependency "rspec"
+  s.add_dependency "activesupport"
+  s.add_dependency "sequel"
+
   s.extra_rdoc_files = ["README.rdoc"]
   s.rdoc_options     = ["--main", "README.rdoc"]
   
-  s.add_dependency "uuidtools"
-  s.add_development_dependency "rspec"
-
 end

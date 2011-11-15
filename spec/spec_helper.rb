@@ -1,43 +1,23 @@
-ENV['RAILS_ENV'] = 'test'
- 
-require 'test/unit'
-require File.expand_path(File.join(Dir.pwd, 'config/environment.rb'))
- 
-def load_schema
-  config = YAML::load(IO.read('config/database.yml'))
-  ActiveRecord::Base.logger = Logger.new("log/test.log")
- 
-  db_adapter = ENV['DB']
- 
-  # no db passed, try one of these fine config-free DBs before bombing.
-  db_adapter ||=
-    begin
-      require 'rubygems'
-      require 'sqlite'
-      'sqlite'
-    rescue MissingSourceFile
-      begin
-        require 'sqlite3'
-        'sqlite3'
-      rescue MissingSourceFile
-      end
-    end
- 
-  if db_adapter.nil?
-    raise "No DB Adapter selected. Pass the DB= option to pick one, or install Sqlite or Sqlite3."
+require File::expand_path "../../lib/ecore", __FILE__
+
+Ecore::Repository.init "spec/test-config-ecore.yml"
+
+def create_contacts(num)
+  arr = []
+  (1..num).each do |i|
+    arr << Contact.create!(@user1_id, :name => "c#{i}")
   end
- 
-  ActiveRecord::Base.establish_connection(config[db_adapter])
-  load("db/schema.rb") if !File::exists?('db/test.sqlite3')
-  require File.dirname(__FILE__) + '/../init'
+  arr
 end
 
-def create_folder(name)
-  Folder.create!(:name => name, :session => @session)
+class Contact
+  include Ecore::DocumentResource
+  default_attributes
 end
 
-require 'rspec'
-require 'rspec/autorun'
-require File::expand_path('../../app/models/folder',__FILE__)
-
-load_schema
+def init_users_and_contact_class
+  @user1_id = "1a"
+  @user2_id = "2b"
+  Ecore::db.drop_table(:contacts) if Ecore::db.table_exists?(:contacts)
+  Contact.migrate
+end

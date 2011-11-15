@@ -1,3 +1,3 @@
 module Ecore
-  VERSION = "1.1.1" unless Ecore::const_defined?(:VERSION)
+  VERSION = "2.0alpha" unless Ecore::const_defined?(:VERSION)
 end

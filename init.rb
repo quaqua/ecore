@@ -4,6 +4,4 @@
 # or if you need to adjust many things.
 # otherwise, "ecore" should be required from Gemfile
 
-$:.push File.expand_path("../lib", __FILE__)
-require 'ecore/plugin'
-require "ecore/version"
+require File::expand_path('../lib/ecore', __FILE__)

@@ -1,2 +1,10 @@
-require "ecore/version"
-require "ecore/railtie" if defined?(Rails)
+$:.push File.expand_path("../ecore", __FILE__)
+require 'version'
+require 'document'
+require 'repository'
+require 'document_resource'
+require 'link'
+require 'label'
+require 'user'
+require 'group'
+require 'audit'

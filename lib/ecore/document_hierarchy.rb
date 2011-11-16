@@ -39,8 +39,16 @@ module Ecore
     # Sets the parent_id (and calculates the full path of parent, so it can
     # be set without any further effort.
     def parent_id=(p_id)
-      return if p_id.empty?
-      p = Ecore::Document.find(@user_id).filter(:id => p_id).receive
+      return if p_id.empty? || p_id == parent_id
+      user_id = @user_id
+      if @group_ids
+        user_id = @group_ids
+      else
+        if u = Ecore::User.first(@user_id)
+          user_id = u.id_and_group_ids
+        end
+      end
+      p = Ecore::Document.find(user_id).filter(:id => p_id).receive
       self.path = p.absolute_path
       @acl_read = p.acl_read
       @acl_read << ",#{@user_id}" unless @acl_read.include?(@user_id)
@@ -53,7 +61,15 @@ module Ecore
     # returns the document's parent
     def parent
       return nil if parent_id.nil?
-      self.class.find(@user_id).where(:id => parent_id).receive
+      user_id = @user_id
+      if @group_ids
+        user_id = @group_ids
+      else
+        if u = Ecore::User.first(@user_id)
+          user_id = u.id_and_group_ids
+        end
+      end
+      self.class.find(user_id).where(:id => parent_id).receive
     end
 
     # returns all ancestors of this document
@@ -71,7 +87,8 @@ module Ecore
       p.reverse! if reverse == :reverse
       @ancestors_cache = p.inject([]) do |arr,doc_id|
         if doc_id and !doc_id.empty?
-          arr << Ecore::Document.find(@user_id).where(:id => doc_id).receive
+          user_id = (@group_ids || @user_id)
+          arr << Ecore::Document.find(user_id).where(:id => doc_id).receive
         end
         arr
       end

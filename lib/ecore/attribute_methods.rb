@@ -17,7 +17,13 @@ module Ecore
           val = val.sub(',','.').to_f if val.is_a?(String) && val.match(/^\d+[\.,\,]{0,1}\d*$/)
           val = val.to_f if val.is_a?(Integer)
         elsif type == :datetime || type == :date
-          val = Time.parse(val) if val.is_a?(String)
+          if val.is_a?(String)
+            if val.size > 10
+              val = Time.parse(val)
+            else
+              val = Time.parse("#{val} 00:00:00")
+            end
+          end
           val = Time.at(val) if val.is_a?(Float)
           val = val.to_date if type == :date
         elsif type == :boolean

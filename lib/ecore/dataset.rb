@@ -6,7 +6,9 @@ module Sequel
     # :receive method, so objects can be 
     # initialized and passed back.
     #
-    def store_preconditions(user_id,type,parent=nil,user_options=nil)
+    # user_options is only used in Ecore::User class
+    #
+    def store_preconditions(user_id,type,parent=nil,user_options=nil,additional_options={:hidden => false})
       @parent = parent
       @user_id = user_id
       @users = !user_options.nil?
@@ -19,7 +21,7 @@ module Sequel
       else
         stmt << " OR acl_read LIKE '%#{user_id}%'"
       end
-      ds = where(stmt).where(:hidden => false)
+      ds = where(stmt).where(additional_options)
       ds = ds.where(:type => type) if type
       ds
     end

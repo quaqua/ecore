@@ -71,8 +71,12 @@ module Ecore
       false
     end
 
-    def can_read?(user_id_or_user=@user_id)
-      user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
+    def can_read?(user_id_or_user=nil)
+      if user_id_or_user
+        user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
+      else
+        user_id = @group_ids || @user_id
+      end
       return false unless @acl_read
       return true if @acl_read.include?(Ecore::User.anybody_id)
       return true if @acl_read.include?(user_id)
@@ -84,9 +88,18 @@ module Ecore
       false
     end
 
-    def can_write?(user_id_or_user=@user_id)
+    def can_write?(user_id_or_user=nil)
       return false unless @acl_write
-      user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
+      if user_id_or_user
+        user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
+      else
+        user_id = @group_ids || @user_id
+        if user_id.include?(',')
+          user_id.split(',').each do |u_id|
+            return true if @acl_write.include?(u_id)
+          end
+        end
+      end
       return true if @acl_write.include?(user_id)
       if user = Ecore::User.first(user_id)
         user.groups.each do |group|
@@ -96,9 +109,18 @@ module Ecore
       false
     end
 
-    def can_delete?(user_id_or_user=@user_id)
+    def can_delete?(user_id_or_user=nil)
       return false unless @acl_delete
-      user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
+      if user_id_or_user
+        user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
+      else
+        user_id = @group_ids || @user_id
+        if user_id.include?(',')
+          user_id.split(',').each do |u_id|
+            return true if @acl_delete.include?(u_id)
+          end
+        end
+      end
       return true if @acl_delete.include?(user_id)
       if user = Ecore::User.first(user_id)
         user.groups.each do |group|

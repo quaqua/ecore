@@ -207,7 +207,7 @@ module Ecore
 
     # Return all group_ids including own user_id
     def id_and_group_ids
-      "#{group_ids},#{@id}"
+      ((@group_ids && !@group_ids.empty?) ? "#{@id},#{@group_ids}" : @id)
     end
 
     # Returns true, if the given user is currently online

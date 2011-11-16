@@ -98,11 +98,14 @@ describe "Document ACCESS CONTROL" do
   end
 
   it "shares a document with all members of a group" do
+    Ecore::db[:users].delete
     g1 = Ecore::Group.create(@user1_id, :name => "g1")
     u1 = Ecore::User.create(@user1_id, :name => "u1", :password => 'p1')
     u2 = Ecore::User.create(@user1_id, :name => "u2", :password => 'p2')
+    u1.add_group!(g1)
+    u2.add_group!(g1)
     c1 = Contact.create(u1.id, :name => 'c1')
-    c1.share(g1).should == true
+    c1.share!(g1).should == true
     Contact.find(u2.id_and_group_ids).where(:name => 'c1').receive.class.should == Contact
   end
 

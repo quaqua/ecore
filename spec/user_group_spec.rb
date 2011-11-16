@@ -160,7 +160,7 @@ describe "Users and Groups" do
 
   it "returns own id and all group ids as a string" do
     @u1.add_group!(@g1)
-    @u1.id_and_group_ids.should == "#{@g1.id},#{@u1.id}"
+    @u1.id_and_group_ids.should == "#{@u1.id},#{@g1.id}"
   end
 
   it "returns fullname or name if no name is set" do

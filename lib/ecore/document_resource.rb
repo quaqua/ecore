@@ -138,6 +138,11 @@ module Ecore
 
       # finds a document in the repository
       #
+      # options:
+      #
+      # * <tt>:trashed</tt> - lookup in document's trash table (if configured)
+      # * <tt>:hidden</tt> - also include hidden douments in lookup
+      #
       # examples:
       #   MyDefinitionClass.find(user).where(:name.like('%hann%').where(:created_at.lt(Time.now)).receive(:all)
       #   # => [<mydefclassinst1>,<mydefclassinst2>]
@@ -145,9 +150,9 @@ module Ecore
       #   MyDefinitionClass.find(user_id).where(:id => '2owietu2').receive
       #   # => mydefclassinst
       #
-      def find(user_id_or_user, options={:trashed => false})
-        user_id = extract_id_from_user_id_or_user(user_id_or_user)
-        Ecore::db[:"#{table_name}#{"_trash" if options[:trashed]}"].store_preconditions(user_id,get_type_if_has_superclass)
+      def find(user_id_or_user, options={:trashed => false, :hidden => false})
+        Ecore::logger.info "WE HAVE: #{user_id_or_user}"
+        Ecore::db[:"#{table_name}#{"_trash" if options.delete(:trashed)}"].store_preconditions(user_id_or_user,get_type_if_has_superclass,nil,nil,options)
       end
 
       # extracts user id from user, if user object is given, if id is
@@ -199,7 +204,12 @@ module Ecore
     #   MyDoc.new(session[:user_id], :name => 'document')
     # creates a new instance with given id
     def initialize(user_id_or_user, attrs={})
-      @user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
+      if user_id_or_user.is_a?(String) && user_id_or_user.include?(',')
+        @user_id = user_id_or_user.split(',').first
+        @group_ids = user_id_or_user
+      else
+        @user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
+      end
       set_attributes(attrs)
       @changed_attributes = nil
       run_hooks(:after, :initialize)
@@ -365,6 +375,11 @@ module Ecore
     def reload
       set_attributes(Ecore::db[table_name].first(:id => @id))
       self
+    end
+
+    # returns the updated_by as a Ecore::User instance
+    def updater
+      Ecore::User.first(@updated_by)
     end
 
     private

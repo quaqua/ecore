@@ -31,6 +31,14 @@ module Ecore
         name.underscore.pluralize.to_sym
       end
 
+      def hidden
+        @hidden = true
+      end
+
+      def hidden?
+        @hidden
+      end
+
       def default_attributes
         attribute :name, :string, :null => false
         attribute :color, :string
@@ -401,7 +409,10 @@ module Ecore
       @updated_at = Time.now
       @created_by = @user_id
       @updated_by = @user_id
-      @hidden ||= false
+      puts "HIDDEN IS #{@hidden}"
+      puts "class says: #{self.class.hidden?}"
+      @hidden ||= (self.class.hidden? ? true : false)
+      puts "now has: #{@hidden}"
     end
 
     def set_attributes(attrs)

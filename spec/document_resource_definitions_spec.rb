@@ -150,4 +150,8 @@ describe "DocumentResource definitions" do
     DocumentDefAChild.table_name.should == :document_def_as
   end
 
+  it "returns a list of classes that include Ecore::DocumentResource" do
+    Ecore::DocumentResource.classes.should == ["Ecore::Link", "Contact", "HookA", "DocumentA", "DocumentDefA", "DocumentDefB", "DocumentDefC"]
+  end
+
 end

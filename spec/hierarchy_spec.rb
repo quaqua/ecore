@@ -193,4 +193,18 @@ describe "Document Hierarchy" do
     Contact.find(@user1_id).where(:id => b.id).receive.path.should == "/#{c.id}"
   end
 
+  it "moves child with all subchilds to another document" do
+    a,b,c,d,e = create_contacts(5)
+    a.children << b
+    b.children << c
+    c.children << d
+    b.path.should == "/#{a.id}"
+    c.path.should == "/#{a.id}/#{b.id}"
+    d.path.should == "/#{a.id}/#{b.id}/#{c.id}"
+    b.update(:parent_id => e.id).should == true
+    b.reload.path.should == "/#{e.id}"
+    c.reload.path.should == "/#{e.id}/#{b.id}"
+    d.reload.path.should == "/#{e.id}/#{b.id}/#{c.id}"
+  end
+
 end

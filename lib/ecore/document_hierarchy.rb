@@ -49,7 +49,9 @@ module Ecore
         end
       end
       p = Ecore::Document.find(user_id).filter(:id => p_id).receive
+      @old_path = self.path
       self.path = p.absolute_path
+      @path_changed = self.path
       @acl_read = p.acl_read
       @acl_read << ",#{@user_id}" unless @acl_read.include?(@user_id)
       @acl_write = p.acl_write

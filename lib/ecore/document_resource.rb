@@ -275,7 +275,7 @@ module Ecore
                                                                             :updated_by => @user_id))
             Ecore::db[:documents].where(:id => @id).update(:name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :path => @path, :label_ids => @label_ids, :hidden => @hidden, :position => @position)
             if @acl_changed && @acl_changed.is_a?(Array)
-              Ecore::Document.find(@user_id).where(:path.like("#{absolute_path}%")).receive(:all).each do |child|
+              Ecore::Document.find(@group_ids || @user_id).where(:path.like("#{absolute_path}%")).receive(:all).each do |child|
                 @acl_changed.each do |acl|
                   next unless child.can_write?
                   if acl[:removed]
@@ -285,6 +285,11 @@ module Ecore
                   end
                   child.save
                 end
+              end
+            end
+            if @path_changed && @path_changed.is_a?(String)
+              Ecore::Document.find(@group_ids || @user_id).where(:path.like("#{@old_path}/#{@id}%")).receive(:all).each do |child|
+                child.update(:path => child.path.sub(@old_path,@path))
               end
             end
             Ecore::Audit.log(@id, self.class.name, @name, "updated", @user_id, @changed_attributes.inspect)

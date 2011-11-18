@@ -1,3 +1,4 @@
+*.swp
 audit.log
 test.sqlite3
 *.gem

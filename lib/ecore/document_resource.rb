@@ -409,10 +409,7 @@ module Ecore
       @updated_at = Time.now
       @created_by = @user_id
       @updated_by = @user_id
-      puts "HIDDEN IS #{@hidden}"
-      puts "class says: #{self.class.hidden?}"
       @hidden ||= (self.class.hidden? ? true : false)
-      puts "now has: #{@hidden}"
     end
 
     def set_attributes(attrs)

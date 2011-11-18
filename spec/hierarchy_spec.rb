@@ -174,4 +174,23 @@ describe "Document Hierarchy" do
     Contact.find(@user2_id).where(:id => c.id).receive.should == nil
   end
 
+  it "moves one child to another parent" do
+    a,b,c = create_contacts(3)
+    a.children << b
+    b.path.should == "/#{a.id}"
+    b.parent_id = c.id
+    b.save.should == true
+    b.reload.path.should == "/#{c.id}"
+  end
+
+  it "moves one child to another parent through update method" do
+    a,b,c = create_contacts(3)
+    a.children << b
+    b.path.should == "/#{a.id}"
+    Contact.find(@user1_id).where(:id => b.id).receive.path.should == "/#{a.id}"
+    b.update(:parent_id => c.id).should == true
+    b.reload.path.should == "/#{c.id}"
+    Contact.find(@user1_id).where(:id => b.id).receive.path.should == "/#{c.id}"
+  end
+
 end

@@ -28,7 +28,7 @@ module Ecore
           val = val.to_date if type == :date
         elsif type == :boolean
           val = (val.is_a?(TrueClass) || 
-                 (val.is_a?(String) && (val == "1" || val.downcase[0..1] == "t")) ||
+                 (val.is_a?(String) && (val == "1" || val.downcase[0,1] == "t")) ||
                  (val.is_a?(Integer) && val == 1)) ? true : false
         end
         instance_variable_set("@"+name.to_s,val)

@@ -289,7 +289,11 @@ module Ecore
             end
             if @path_changed && @path_changed.is_a?(String)
               Ecore::Document.find(@group_ids || @user_id).where(:path.like("#{@old_path}/#{@id}%")).receive(:all).each do |child|
-                child.update(:path => child.path.sub(@old_path,@path))
+                child.path = child.path.sub(@old_path,@path)
+                child.acl_read = acl_read
+                child.acl_write = acl_write
+                child.acl_delete = acl_delete
+                child.save
               end
             end
             Ecore::Audit.log(@id, self.class.name, @name, "updated", @user_id, @changed_attributes.inspect)

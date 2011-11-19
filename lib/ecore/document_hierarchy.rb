@@ -28,7 +28,7 @@ module Ecore
       end
       query = klass.store_preconditions(@user_id,self.class.get_type_if_has_superclass,self).where(:path => absolute_path)
       return query if options[:get_dataset]
-      @children_cache = query.receive(:all)
+      @children_cache = query.order(:position,:name).receive(:all)
     end
 
     # extracts last id from path (which should be parent_id)

@@ -1,6 +1,10 @@
 module Ecore
   module AttributeMethods
 
+    if RUBY_VERSION.include?("1.8")
+      require 'active_support/time'
+    end
+
     attr_accessor :db_setup_attributes
 
     def attribute( name, type, options={} )

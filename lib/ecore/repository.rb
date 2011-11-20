@@ -101,12 +101,6 @@ module Ecore
       tmpenv.each_pair do |key,value|
         Ecore::env.set key.to_sym, value
       end
-      Ecore::Document.migrate
-      Ecore::Link.migrate
-      Ecore::Label.migrate
-      Ecore::User.migrate
-      Ecore::Document.migrate
-      Ecore::Audit.migrate
       Ecore::logger.info("ecore running!")
       #Ecore::Blob.default_fs_path = Ecore::env.get(:default_fs_path) || File::join('db','ecore_datastore')
     end

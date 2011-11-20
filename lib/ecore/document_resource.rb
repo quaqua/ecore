@@ -70,12 +70,12 @@ module Ecore
           end
         else
           Ecore::db.create_table(table_name) do
-            column  :id, :string, :size => 8, :primary_key => true
-            column  :type, :string
-            column  :acl_read, :string, :null => false
-            column  :acl_write, :string, :null => false
-            column  :acl_delete, :string, :null => false
-            column  :label_ids, :string, :default => ""
+            String  :id, :size => 8, :primary_key => true
+            String  :type
+            String  :acl_read, :null => false
+            String  :acl_write, :null => false
+            String  :acl_delete, :null => false
+            String  :label_ids, :default => ""
 
             index   :type
             index   :name
@@ -84,7 +84,14 @@ module Ecore
             index   :label_ids
 
             attrs.each_pair do |name, arr|
-              column name, arr[0], arr[1]
+              String name, arr[1] if arr[0] == :string || arr[0] == String
+              Fixnum name, arr[1] if arr[0] == :integer || arr[0] == Fixnum
+              DateTime name, arr[1] if arr[0] == :datetime || arr[0] == DateTime
+              Date name, arr[1] if arr[0] == :date || arr[0] == Date
+              Time name, arr[1] if arr[0] == :time || arr[0] == Time
+              Float name, arr[1] if arr[0] == :float || arr[0] == Float
+              TrueClass name, arr[1] if arr[0] == :boolean || arr[0] == TrueClass || arr[0] == FalseClass
+              TrueClass name, arr[1] if arr[0] == :bool
             end
           end
         end

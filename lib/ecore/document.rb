@@ -7,15 +7,15 @@ module Ecore
 
     def self.migrate
       Ecore::db.create_table :documents do
-        column  :id, :string, :size => 8, :primary_key => true
-        column  :type, :string, :null => false
-        column  :name, :string, :null => false
-        column  :acl_read, :string, :null => false
+        String  :id, :size => 8, :primary_key => true
+        String  :type, :null => false
+        String  :name, :null => false
+        String  :acl_read, :null => false
         column  :updated_at, :datetime, :null => false
-        column  :path, :string, :null => false
+        String  :path, :null => false
         column  :position, :integer
-        column  :updated_by, :string, :null => false
-        column  :label_ids, :string
+        String  :updated_by, :null => false
+        String  :label_ids
         column  :hidden, :boolean
         index :type
         index :name
@@ -25,16 +25,16 @@ module Ecore
         index :updated_at
       end unless Ecore::db.table_exists?(:documents)
       Ecore::db.create_table :documents_trash do
-        column  :id, :string, :size => 8, :primary_key => true
-        column  :type, :string, :null => false
-        column  :name, :string, :null => false
-        column  :acl_read, :string, :null => false
+        String  :id, :size => 8, :primary_key => true
+        String  :type, :null => false
+        String  :name, :null => false
+        String  :acl_read, :null => false
         column  :updated_at, :datetime, :null => false
-        column  :path, :string, :null => false
-        column  :updated_by, :string, :null => false
+        String  :path, :null => false
+        String  :updated_by, :null => false
         column  :deleted_at, :datetime, :null => false
-        column  :deleted_by, :string, :null => false
-        column  :label_ids, :string
+        String  :deleted_by, :null => false
+        String  :label_ids
         column  :hidden, :boolean
         column  :position, :integer
         index :type

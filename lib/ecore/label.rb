@@ -6,9 +6,9 @@ module Ecore
     #
     def self.migrate
       Ecore::db.create_table :labels do
-        column  :id, :string, :size => 8, :primary_key => true
-        column  :name, :string, :null => false
-        column  :color, :string
+        String  :id, :size => 8, :primary_key => true
+        String  :name, :null => false
+        String  :color
         index :name
       end unless Ecore::db.table_exists?(:labels)
     end

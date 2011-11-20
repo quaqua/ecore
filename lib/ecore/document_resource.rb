@@ -84,6 +84,7 @@ module Ecore
             index   :label_ids
 
             attrs.each_pair do |name, arr|
+              column name, :text, arr[1] if arr[0] == :text
               String name, arr[1] if arr[0] == :string || arr[0] == String
               Fixnum name, arr[1] if arr[0] == :integer || arr[0] == Fixnum
               DateTime name, arr[1] if arr[0] == :datetime || arr[0] == DateTime

@@ -6,13 +6,13 @@ module Ecore
     #
     def self.migrate
       Ecore::db.create_table :audits do
-        column  :id, :string
-        column  :name, :string, :null => false
-        column  :created_at, :datetime, :null => false
-        column  :type, :string, :null => false
-        column  :user_id, :string, :null => false
-        column  :message, :string
-        column  :action, :string, :null => false
+        String  :id
+        String  :name, :null => false
+        DateTime :created_at, :null => false
+        String  :type, :null => false
+        String  :user_id, :null => false
+        String  :message
+        String  :action, :null => false
         index   :created_at
         index   :id
       end unless Ecore::db.table_exists?(:audits)

@@ -109,7 +109,14 @@ module Ecore
             index   :path
 
             attrs.each_pair do |name, arr|
-              column name, arr[0], arr[1]
+              String name, arr[1] if arr[0] == :string || arr[0] == String
+              Fixnum name, arr[1] if arr[0] == :integer || arr[0] == Fixnum
+              DateTime name, arr[1] if arr[0] == :datetime || arr[0] == DateTime
+              Date name, arr[1] if arr[0] == :date || arr[0] == Date
+              Time name, arr[1] if arr[0] == :time || arr[0] == Time
+              Float name, arr[1] if arr[0] == :float || arr[0] == Float
+              TrueClass name, arr[1] if arr[0] == :boolean || arr[0] == TrueClass || arr[0] == FalseClass
+              TrueClass name, arr[1] if arr[0] == :bool
             end
           end
         end
@@ -131,7 +138,14 @@ module Ecore
             index   :deleted_by
 
             attrs.each_pair do |name, arr|
-              column name, arr[0], arr[1]
+              String name, arr[1] if arr[0] == :string || arr[0] == String
+              Fixnum name, arr[1] if arr[0] == :integer || arr[0] == Fixnum
+              DateTime name, arr[1] if arr[0] == :datetime || arr[0] == DateTime
+              Date name, arr[1] if arr[0] == :date || arr[0] == Date
+              Time name, arr[1] if arr[0] == :time || arr[0] == Time
+              Float name, arr[1] if arr[0] == :float || arr[0] == Float
+              TrueClass name, arr[1] if arr[0] == :boolean || arr[0] == TrueClass || arr[0] == FalseClass
+              TrueClass name, arr[1] if arr[0] == :bool
             end
           end
         end

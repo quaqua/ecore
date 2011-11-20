@@ -130,8 +130,20 @@ describe "Document Hierarchy" do
     c.reload.parent.id.should == b.id
     a.children.push(c)
     b.children(:reload => true).size.should == 0
-    c.reload.parent.id.should == a.id
+    c.reload.parent(:reload).id.should == a.id
   end
+
+  it "caches the document's parent" do
+    a,b,c = create_contacts(3)
+    a.children << b
+    b.children << c
+    b.children.size.should == 1
+    c.reload.parent.id.should == b.id
+    a.children.push(c)
+    b.children(:reload => true).size.should == 0
+    c.reload.parent.id.should == b.id
+  end
+    
     
   it "derives access definitions from parent" do
     a,b,c = create_contacts(3)

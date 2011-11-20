@@ -61,8 +61,9 @@ module Ecore
     end
 
     # returns the document's parent
-    def parent
+    def parent(reload=false)
       return nil if parent_id.nil?
+      return @parent_cache if @parent_cache && (reload.to_s != "reload")
       user_id = @user_id
       if @group_ids
         user_id = @group_ids
@@ -71,7 +72,7 @@ module Ecore
           user_id = u.id_and_group_ids
         end
       end
-      self.class.find(user_id).where(:id => parent_id).receive
+      @parent_cache = self.class.find(user_id).where(:id => parent_id).receive
     end
 
     # returns all ancestors of this document

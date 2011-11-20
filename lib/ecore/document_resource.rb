@@ -288,7 +288,7 @@ module Ecore
               end
             end
             if @path_changed && @path_changed.is_a?(String)
-              Ecore::Document.find(@group_ids || @user_id).where(:path.like("#{@old_path}/#{@id}%")).receive(:all).each do |child|
+              Ecore::Document.find((@group_ids || @user_id), :hidden => true).where(:path.like("#{@old_path}/#{@id}%")).receive(:all).each do |child|
                 child.path = child.path.sub(@old_path,@path)
                 child.acl_read = acl_read
                 child.acl_write = acl_write

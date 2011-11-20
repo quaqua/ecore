@@ -21,6 +21,7 @@ module Sequel
       else
         stmt << " OR acl_read LIKE '%#{user_id}%'"
       end
+      additional_options.delete(:hidden) if additional_options[:hidden] == true
       ds = where(stmt).where(additional_options)
       ds = ds.where(:type => type) if type
       ds

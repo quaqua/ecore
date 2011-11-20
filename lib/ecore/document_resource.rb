@@ -97,12 +97,12 @@ module Ecore
         end
         if options[:version] && !Ecore::db.table_exists?(:"#{table_name}_versions")
           Ecore::db.create_table(:"#{table_name}_versions") do
-            column  :id, :string, :size => 8
-            column  :type, :string
-            column  :acl_read, :string, :null => false
-            column  :acl_write, :string, :null => false
-            column  :acl_delete, :string, :null => false
-            column  :label_ids, :string, :default => ""
+            String  :id, :size => 8, :primary_key => true
+            String  :type
+            String  :acl_read, :null => false
+            String  :acl_write, :null => false
+            String  :acl_delete, :null => false
+            String  :label_ids, :default => ""
 
             index   :id
             index   :updated_at
@@ -115,14 +115,15 @@ module Ecore
         end
         if options[:trash] && !Ecore::db.table_exists?(:"#{table_name}_trash")
           Ecore::db.create_table(:"#{table_name}_trash") do
-            column  :id, :string, :size => 8, :primary_key => true
-            column  :type, :string
-            column  :acl_read, :string, :null => false
-            column  :acl_write, :string, :null => false
-            column  :acl_delete, :string, :null => false
-            column  :label_ids, :string, :default => ""
-            column  :deleted_at, :datetime, :null => false
-            column  :deleted_by, :string, :null => false
+            String  :id, :size => 8, :primary_key => true
+            String  :type
+            String  :acl_read, :null => false
+            String  :acl_write, :null => false
+            String  :acl_delete, :null => false
+            String  :label_ids, :default => ""
+
+            DateTime :deleted_at, :null => false
+            String  :deleted_by, :null => false
 
             index   :updated_at
             index   :path

@@ -49,9 +49,9 @@ module Sequel
       return unless document
       type = document.delete(:type)
       if type && first_source_table == :documents
-        type.constantize.find(user_id).where(:id => document[:id]).receive
+        type.constantize.find(user_id, :hidden => true).where(:id => document[:id]).receive
       elsif type && first_source_table == :documents_trash
-        type.constantize.find(user_id, :trashed => true).where(:id => document[:id]).receive
+        type.constantize.find(user_id, :trashed => true, :hidden => true).where(:id => document[:id]).receive
       elsif type
         type.constantize.new(user_id,document)
       else

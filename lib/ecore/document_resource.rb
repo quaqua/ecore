@@ -31,15 +31,12 @@ module Ecore
         name.underscore.pluralize.to_sym
       end
 
-      def hidden
-        @hidden = true
-      end
-
       def hidden?
         @hidden
       end
 
-      def default_attributes
+      def default_attributes(options={})
+        @hidden = options[:hidden] || false
         attribute :name, :string, :null => false
         attribute :color, :string
         attribute :starred, :boolean, :default => false
@@ -52,7 +49,7 @@ module Ecore
         attribute :updated_at, :datetime
         attribute :updated_by, :string
 
-        attribute :hidden, :boolean, :default => false
+        attribute :hidden, :boolean, :default => @hidden
 
         validate :presence, :name
         after :destroy, :destroy_link
@@ -325,7 +322,11 @@ module Ecore
           end 
         end
       rescue StandardError => e
+        Ecore::logger.error "TRYING TO SAVE DOCUMENT #{@name}"
         Ecore::logger.error e.inspect
+        e.backtrace.each do |bt|
+          Ecore::logger.error bt
+        end
         @id = nil if this_new_record
         @errors ||= {}
         @errors[:DB] = ['could not save document to repository']
@@ -441,7 +442,7 @@ module Ecore
       @updated_at = Time.now
       @created_by = @user_id
       @updated_by = @user_id
-      @hidden ||= (self.class.hidden? ? true : false)
+      @hidden ||= false #(self.class.hidden? ? true : false)
     end
 
     def set_attributes(attrs)

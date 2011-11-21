@@ -19,7 +19,7 @@ module Ecore
     # example:
     #   mydocument.children(:exec => false).where(:name => 'test').receive(:all)
     #
-    def children(options={:type => nil, :get_dataset => false, :reload => false, :preconditions => {}})
+    def children(options={:type => nil, :get_dataset => false, :reload => false, :preconditions => {:hidden => false}})
       return @children_cache if @children_cache and !options[:get_dataset] and !options[:reload]
       klass = Ecore::db[:documents]
       if options[:type]

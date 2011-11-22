@@ -107,7 +107,7 @@ module Ecore
       #Ecore::User.migrate
       #Ecore::Document.migrate
       #Ecore::Audit.migrate
-      Ecore::logger.info("ecore running!")
+      Ecore::logger.info("ecore initialized.")
       #Ecore::Blob.default_fs_path = Ecore::env.get(:default_fs_path) || File::join('db','ecore_datastore')
     end
 

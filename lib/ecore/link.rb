@@ -8,6 +8,8 @@ module Ecore
   class Link
     include Ecore::DocumentResource
 
+    default_attributes
+
     attribute :orig_document_id, :string, :null => false
     attribute :orig_document_type, :string, :null => false
 

@@ -21,5 +21,19 @@ namespace :ecore do
     # t.verbose = true     # uncomment to see the executed command
   end
   
+  description = "ecore migration script to run before ecore:spec"
+  desc description
+  task :prepare_spec do
+    require 'fileutils'
+    require File::expand_path "../lib/ecore", __FILE__
+    FileUtils::rm("./test.sqlite3")
+    Ecore::Repository.init "spec/test-config-ecore.yml"
+    Ecore::Document.migrate
+    Ecore::Link.migrate
+    Ecore::Label.migrate
+    Ecore::User.migrate
+    Ecore::Document.migrate
+    Ecore::Audit.migrate
+  end
 
 end

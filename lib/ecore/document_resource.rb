@@ -222,7 +222,7 @@ module Ecore
       @classes
     end
 
-    attr_reader :attributes, :changed_attributes, :user_id
+    attr_reader :attributes, :orig_attributes, :changed_attributes, :user_id
     attr_accessor :id, :acl_read, :acl_write, :acl_delete, :label_ids, :deleted_by, :deleted_at
 
     def table_name
@@ -454,6 +454,8 @@ module Ecore
       if attrs.is_a?(Hash) && attrs.keys.size > 0
         attrs.each_pair do |name, val|
           next if name == :type
+          @orig_attributes ||= {}
+          @orig_attributes[name.to_sym] = val
           send(:"#{name}=", val)
         end
       end

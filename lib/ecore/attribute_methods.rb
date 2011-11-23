@@ -29,15 +29,17 @@ module Ecore
             end
           end
           val = Time.at(val) if val.is_a?(Float)
-          val = val.to_date if type == :date
+          val = val.to_date if type == :date && val.is_a?(Time)
         elsif type == :boolean
           val = (val.is_a?(TrueClass) || 
                  (val.is_a?(String) && (val == "1" || val.downcase[0,1] == "t")) ||
                  (val.is_a?(Integer) && val == 1)) ? true : false
         end
+        if !@orig_attributes || (!@orig_attributes.has_key?(name.to_sym) || @orig_attributes[name.to_sym] != val)
+          @changed_attributes ||= {}
+          @changed_attributes[name.to_sym] = val
+        end
         instance_variable_set("@"+name.to_s,val)
-        @changed_attributes ||= {}
-        @changed_attributes[name.to_sym] = val
         self.attributes[name.to_sym] = val unless link
       })
       send(:define_method, name.to_sym, lambda{

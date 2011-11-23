@@ -87,4 +87,24 @@ describe "DocumentResource attributes" do
     DocumentA.gen_unique_id.size.should == 8
   end
 
+  it "collects changed values for a document" do
+    a = DocumentA.new(@user1_id, @doc_a_attrs)
+    a.save.should == true
+    a = DocumentA.find(@user1_id).where(:id => a.id).receive
+    a.changed_attributes.should == nil
+    a.name = "diffname"
+    a.changed_attributes.should == {:name => "diffname"}
+  end
+
+  it "reports original (past) values of a document" do
+    a = DocumentA.new(@user1_id, @doc_a_attrs)
+    a.save.should == true
+    a = DocumentA.find(@user1_id).where(:id => a.id).receive
+    a.orig_attributes.has_key?(:name).should == true
+    a.orig_attributes[:name].should == 'Document A'
+    a.name = 'diffname'
+    a.orig_attributes[:name].should == 'Document A'
+    a.name.should == 'diffname'
+  end
+
 end

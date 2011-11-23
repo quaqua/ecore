@@ -121,4 +121,13 @@ describe "Document ACCESS CONTROL" do
     Contact.find(Ecore::User.anybody_id).receive.acl_delete.include?(Ecore::User.anybody_id).should == false
   end
 
+  it "will remove acl_write/acl_delete for anybody in any circumstance" do
+    c1 = create_contacts(1)[0]
+    c1.acl_write = c1.acl_write << ",#{Ecore::User.anybody_id}"
+    c1.acl_write.should == "#{@user1_id},#{Ecore::User.anybody_id}"
+    c1.save.should == true
+    c1.acl_write.should == @user1_id
+    c1.acl_delete.should == @user1_id
+  end
+
 end

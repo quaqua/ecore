@@ -5,29 +5,32 @@ update to version 2.0
 ecore is a content repository implemented in Ruby, using SQL as a backend.
 It is ready to use with RubyOnRails.
 
-It uses Sequel to speak with SQL.
+It uses Sequel to speak with SQL. That makes ecore a powerful and well-proofed
+content repository with journaling-like behaviour, versioning and a full featured
+user control mechanism (including an auditing)
 
 More documentation following.
 
 == Usage examples
 
-create document definition:
+create document definition by mixing in the Ecore::DocumentResource module
+
   class Contact
     include Ecore::DocumentResource
 
     attribute :firstname, :string
   end
 
-instantiate a Contact
+instantiate an Ecore::DocumentResource
   Contact.new(current_user, :firstname => 'Rodger')
 
-find a Contact
+find an Ecore::DocumentResource
   contact = Contact.find(current_user).filter(:firstname.like('Rodger')).receive
 
-share a Contact with anybody
+share an Ecore::DocumentResource with anybody
   contact.share(Ecore::User.anybody,'r')
 
-get number of children of contact
+get number of children of an Ecore::DocumentResource
   contact.children.count
 
 == License

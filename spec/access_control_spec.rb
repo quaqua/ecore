@@ -109,4 +109,16 @@ describe "Document ACCESS CONTROL" do
     Contact.find(u2.id_and_group_ids).where(:name => 'c1').receive.class.should == Contact
   end
 
+  it "will allways remove acl_write/acl_delete for anybody user automatically" do
+    c1,c2,c3 = create_contacts(3)
+    c1.share!(Ecore::User.anybody_id)
+    c1.children << c2
+    c2.children << c3
+    c3.acl_read.include?(Ecore::User.anybody_id).should == true
+    c3.acl_write.include?(Ecore::User.anybody_id).should == false
+    c3.acl_delete.include?(Ecore::User.anybody_id).should == false
+    Contact.find(Ecore::User.anybody_id).receive.acl_write.include?(Ecore::User.anybody_id).should == false
+    Contact.find(Ecore::User.anybody_id).receive.acl_delete.include?(Ecore::User.anybody_id).should == false
+  end
+
 end

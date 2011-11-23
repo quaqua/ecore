@@ -263,6 +263,7 @@ module Ecore
           default_private_setup_hooks_init
           run_hooks(:before,:create) if this_new_record
           run_hooks(:before,:save)
+          ensure_anybody_cannot_write
           Ecore::db.transaction do
             @id = self.class.gen_unique_id
             Ecore::db[table_name].insert(attributes.merge(:created_at => @created_at,
@@ -283,6 +284,7 @@ module Ecore
         else # if not new record
           run_hooks(:before,:update)
           run_hooks(:before,:save)
+          ensure_anybody_cannot_write
           Ecore::db.transaction do
             save_attrs = attributes
             save_attrs.delete(:created_by)
@@ -465,6 +467,11 @@ module Ecore
         @attributes[db_attr.to_sym] = default_value
         send(:"#{db_attr}=", default_value) if default_value
       end
+    end
+
+    def ensure_anybody_cannot_write
+      @acl_write = @acl_write.split(',').inject(Array.new){ |arr, w| arr << w if w != Ecore::User.anybody_id ; arr }.join(',')
+      @acl_delete = @acl_delete.split(',').inject(Array.new){ |arr, w| arr << w if w != Ecore::User.anybody_id ; arr }.join(',')
     end
 
   end

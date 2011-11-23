@@ -64,6 +64,14 @@ module Ecore
               Ecore::db.add_column(table_name, name, arr[0], arr[1])
               Ecore::logger.info("column '#{name}' has been added to #{table_name}")
             end
+            if options[:version] && Ecore::db.table_exists?(:"#{table_name}_versions") && !Ecore::db[:"#{table_name}_versions"].columns.include?(name)
+              Ecore::db.add_column(:"#{table_name}_versions", name, arr[0], arr[1])
+              Ecore::logger.info("column '#{name}' has been added to #{table_name}_versions")
+            end
+            if options[:trash] && Ecore::db.table_exists?(:"#{table_name}_trash") && !Ecore::db[:"#{table_name}_trash"].columns.include?(name)
+              Ecore::db.add_column(:"#{table_name}_trash", name, arr[0], arr[1])
+              Ecore::logger.info("column '#{name}' has been added to #{table_name}_versions")
+            end
           end
         else
           Ecore::db.create_table(table_name) do

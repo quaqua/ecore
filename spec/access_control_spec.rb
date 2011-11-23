@@ -130,4 +130,18 @@ describe "Document ACCESS CONTROL" do
     c1.acl_delete.should == @user1_id
   end
 
+  it "keeps the privileges for a user who owned the document on child documents (parent owner can delete child documents)" do
+    c1,c2 = create_contacts(2)
+    c1.share!(@user2_id)
+    c1.can_delete?.should == true
+    c1 = Contact.find(@user2_id).where(:id => c1.id).receive
+    c1.can_delete?.should == false
+    c1.can_write?.should == true
+    c3 = Contact.create(@user2_id, :name => 'c3')
+    c3.can_delete?(@user1_id).should == false
+    c1.children << c3
+    c3.can_write?(@user1_id).should == true
+    c3.can_delete?(@user1_id).should == true
+  end
+
 end

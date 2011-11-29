@@ -26,7 +26,7 @@ namespace :ecore do
   task :prepare_spec do
     require 'fileutils'
     require File::expand_path "../lib/ecore", __FILE__
-    FileUtils::rm("./test.sqlite3")
+    FileUtils::rm("./test.sqlite3") if File::exists?("./test.sqlite3")
     Ecore::Repository.init "spec/test-config-ecore.yml"
     Ecore::Document.migrate
     Ecore::Link.migrate

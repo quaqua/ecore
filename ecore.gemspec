@@ -20,8 +20,10 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec"
   s.add_development_dependency "rcov"
+  s.add_development_dependency "sqlite3"
   s.add_dependency "activesupport"
   s.add_dependency "sequel"
+  s.add_dependency "i18n"
 
   s.extra_rdoc_files = ["README.rdoc"]
   s.rdoc_options     = ["--main", "README.rdoc"]

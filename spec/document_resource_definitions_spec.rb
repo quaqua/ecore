@@ -151,7 +151,11 @@ describe "DocumentResource definitions" do
   end
 
   it "returns a list of classes that include Ecore::DocumentResource" do
-    Ecore::DocumentResource.classes.should == ["Ecore::Link", "Contact", "HookA", "DocumentA", "DocumentDefA", "DocumentDefB", "DocumentDefC"]
+    Ecore::DocumentResource.classes.include?("Ecore::Link").should == true
+    Ecore::DocumentResource.classes.include?("Contact").should == true
+    Ecore::DocumentResource.classes.include?("DocumentDefA").should == true
+    Ecore::DocumentResource.classes.include?("DocumentDefB").should == true
+    Ecore::DocumentResource.classes.include?("DocumentDefC").should == true
   end
 
 end

@@ -1,5 +1,5 @@
 logger:
-  level: DEBUG
+  level: WARN
 
 db:
   database: "test.sqlite3"

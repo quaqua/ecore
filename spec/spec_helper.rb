@@ -13,6 +13,8 @@ end
 class Contact
   include Ecore::DocumentResource
   default_attributes
+  attribute :firstname, :string
+  attribute :lastname, :string
 end
 
 def init_users_and_contact_class

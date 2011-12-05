@@ -72,18 +72,53 @@ module Ecore
 
   class DBMapper
 
+    # connect to the database
+    # this is configured in the ecore.yml (or other if specified at Ecore::Repository.init)
+    #
+    # options in ecore.yml:
+    #
+    # default options for sqlite3
+    #   db:
+    #     adapter: 'sqlite3' # default
+    #     database: 'db/mydb.sqlite3'
+    #
+    # typical options for mysql
+    #   db:
+    #     adapter: 'mysql'
+    #     database: 'mydb'
+    #     user: 'user'
+    #     password: 'userpwd'
+    #     host: 'localhost'
+    #
+    # typical options for jdbc:sqlite
+    #   db:
+    #     adapter: 'jdbc'
+    #     database: 'jdbc:sqlite:db/mydb.sqlite3'
+    #
     def self.connection
       unless @db
         @connection_settings = {:adapter => 'sqlite', :database => 'db/ecore.sqlite3'}
         if Ecore::env.get(:db) && Ecore::env.get(:db)[:adapter] && Ecore::env.get(:db)[:adapter] != "sqlite"
-          @connection_settings = { :adapter => Ecore::env.get(:db)[:adapter],
-                                  :host => Ecore::env.get(:db)[:host],
-                                  :user => Ecore::env.get(:db)[:user],
-                                  :password => Ecore::env.get(:db)[:password]}
+          if Ecore::env.get(:db)[:adapter] == "jdbc"
+            @connection_settings = Ecore::env.get(:db)[:database]
+          else
+            @connection_settings = { :adapter => Ecore::env.get(:db)[:adapter],
+              :host => Ecore::env.get(:db)[:host],
+              :user => Ecore::env.get(:db)[:user],
+              :password => Ecore::env.get(:db)[:password]}
+          end
         end
-        @connection_settings.merge!(:database => Ecore::env.get(:db)[:database]) if Ecore::env.get(:db) && Ecore::env.get(:db)[:database]
-        @connection_settings.merge!(:logger => Ecore::logger)
-        @db = Sequel.connect(@connection_settings)
+        if Ecore::env.get(:db) && Ecore::env.get(:db)[:database]
+          if Ecore::env.get(:db)[:adapter] && Ecore::env.get(:db)[:adapter] == 'jdbc'
+            @db = Sequel.connect(@connection_settings, :logger => Ecore::logger)
+          else
+            @connection_settings.merge!(:database => Ecore::env.get(:db)[:database]) 
+            @connection_settings.merge!(:logger => Ecore::logger)
+            @db = Sequel.connect(@connection_settings)
+          end
+        else
+          @db = Sequel.connect(@connection_settings)
+        end
       end
       @db
     rescue Sequel::DatabaseDisconnectError
@@ -92,6 +127,13 @@ module Ecore
 
   end
 
+  # initialize the repository. This line is required in order to start working
+  # with ecore.
+  #
+  # options
+  #
+  # * <tt>config_file</tt> - the configuration file that should be used for this ecore session
+  #
   module Repository
 
     def self.init(config_file=File.join("config","ecore.yml"))

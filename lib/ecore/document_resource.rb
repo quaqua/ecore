@@ -161,7 +161,7 @@ module Ecore
    
       # creates a document and returns it
       def create(user_id_or_user, attrs={})
-        doc = new(user_id_or_user,attrs)
+        doc = new(extract_id_from_user_id_or_user(user_id_or_user),attrs)
         doc.save
         doc
       end

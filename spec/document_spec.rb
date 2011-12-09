@@ -245,5 +245,11 @@ describe "Document main functionality" do
     a.name = 'other'
     a.changed_attributes.should == {:name => 'other'}
   end
+
+  it "finds a document by providing a new user object" do
+    u1 = Ecore::User.first(:name => "uu1") || Ecore::User.create("1a", :name => 'uu1', :password => 'pu1')
+    c1 = Contact.create(u1, :name => 'c1')
+    Ecore::Document.find(u1).filter(:name => 'c1').receive.id.should == c1.id
+  end
     
 end

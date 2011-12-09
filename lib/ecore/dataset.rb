@@ -10,6 +10,7 @@ module Sequel
     #
     def store_preconditions(user_id,type,parent=nil,user_options=nil,additional_options={:hidden => false})
       @parent = parent
+      user_id = user_id.id_and_group_ids if user_id.is_a?(Ecore::User)
       @user_id = user_id
       @users = !user_options.nil?
       return filter(user_options) if @users
@@ -53,8 +54,10 @@ module Sequel
       elsif type && first_source_table == :documents_trash
         type.constantize.find(user_id, :trashed => true, :hidden => true).where(:id => document[:id]).receive
       elsif type
+        user_id = user_id.id if user_id.is_a?(Ecore::User)
         type.constantize.new(user_id,document)
       else
+        user_id = user_id.id if user_id.is_a?(Ecore::User)
         klass = first_source_table.to_s
         klass.sub!("_trash","") if klass.include?("_trash")
         klass.singularize.classify.constantize.new(user_id,document)

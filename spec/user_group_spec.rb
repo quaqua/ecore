@@ -68,7 +68,7 @@ describe "Users and Groups" do
     u1 = Ecore::User.first(:name => 'u1')
     now = Time.now
     u1.update(:last_request_at => now)
-    Ecore::User.first(:name => 'u1').last_request_at.should == now
+    Ecore::User.first(:name => 'u1').last_request_at.strftime('%d.%m.%y %H:%M').should == now.strftime('%d.%m.%y %H:%M')
   end
 
   it "sets role to default role specified in ecore.yml" do

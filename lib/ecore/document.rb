@@ -53,7 +53,7 @@ module Ecore
     # * <tt>:hidden</tt> - also include hidden douments in lookup
     #
     def self.find(user_id_or_user, options={:trashed => false, :hidden => false})
-      user_id = user_id_or_user.is_a?(String) ? user_id_or_user : user_id_or_user.id
+      user_id = user_id_or_user.is_a?(String) ? user_id_or_user : user_id_or_user.id_and_group_ids
       Ecore::db[:"documents#{"_trash" if options.delete(:trashed)}"].store_preconditions(user_id,nil,nil,nil,options)
     end
 

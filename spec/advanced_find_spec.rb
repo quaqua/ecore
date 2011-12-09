@@ -65,4 +65,9 @@ describe "Document Advanced finders" do
     c4.parent.id.should == @c3.id
   end
 
+  it "finds a document by providing a user object" do
+    c5 = Contact.create!(@u2, :name => 'c5')
+    Contact.find(@u2).filter(:name => 'c5').receive.id.should == c5.id
+  end
+
 end

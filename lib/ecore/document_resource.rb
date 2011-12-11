@@ -253,6 +253,7 @@ module Ecore
         @group_ids = user_id_or_user
       else
         @user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
+        @group_ids = user_id_or_user.id_and_group_ids if user_id_or_user.is_a?(Ecore::User)
       end
       set_attributes(attrs)
       @changed_attributes = nil

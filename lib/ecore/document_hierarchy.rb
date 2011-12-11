@@ -48,7 +48,7 @@ module Ecore
           user_id = u.id_and_group_ids
         end
       end
-      p = Ecore::Document.find(user_id).filter(:id => p_id).receive
+      p = Ecore::Document.find(user_id, :hidden => true).filter(:id => p_id).receive
       @old_path = self.path
       self.path = p.absolute_path
       @path_changed = self.path

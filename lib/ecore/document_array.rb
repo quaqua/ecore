@@ -32,6 +32,14 @@ module Ecore
       child if push(child)
     end
 
+    # same as create, but raises Ecore::SavingFailed Error if
+    # push returns false
+    def create!(type=self.class, child_attributes={})
+      child = build(type,child_attributes)
+      raise(SavingFailed, child.errors) unless push(child)
+      child
+    end
+
     # just prepares a new object of type
     # returning the new object but does not save anything
     # to the repository yet.
@@ -40,7 +48,7 @@ module Ecore
     #   mydocument.children.build(MyDocument, :name => 'test')
     #   # => <MyDocumentInstance>
     def build(type=self.class, child_attributes)
-      raise(Ecore::SecurityTransgression, "not enough privileges for #{user_id} to create child in #{@absolute_path}") unless @can_write
+      raise(Ecore::SecurityTransgression, "not enough privileges for #{@user_id} to create child in #{@absolute_path}") unless @can_write
       raise(TypeError, "type must be an Ecore::DocumentResource") unless type.respond_to?(:table_name)
       type.new(@user_id, child_attributes.merge(:path => @absolute_path))
     end

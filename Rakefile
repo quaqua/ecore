@@ -1,8 +1,8 @@
 require "bundler/gem_tasks"
+require 'rdoc/task'
+require 'rspec/core/rake_task'
 
 namespace :ecore do
-  require 'rspec/core/rake_task'
-  require 'rdoc/task'
 
   RSpec::Core::RakeTask.new do |spec|
     #spec.spec_opts = "--format nested --color --fail-fast"

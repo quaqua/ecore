@@ -3,6 +3,7 @@ require 'active_model' if defined?(Rails)
 require File::expand_path("../attribute_methods", __FILE__)
 require File::expand_path("../hooks", __FILE__)
 require File::expand_path("../validations", __FILE__)
+require File::expand_path("../custom_transactions", __FILE__)
 require File::expand_path("../active_model_layer", __FILE__)
 require File::expand_path("../dataset", __FILE__)
 require File::expand_path("../access_control", __FILE__)
@@ -208,6 +209,7 @@ module Ecore
 
     include Ecore::ActiveModelLayer
     include Ecore::Validations::InstanceMethods
+    include Ecore::CustomTransactions::InstanceMethods
     include Ecore::Hooks::InstanceMethods
     include Ecore::AccessControl
     include Ecore::DocumentHierarchy
@@ -219,6 +221,7 @@ module Ecore
       model.extend ClassMethods
       model.extend Ecore::Hooks::ClassMethods
       model.extend Ecore::Validations::ClassMethods
+      model.extend Ecore::CustomTransactions::ClassMethods
       model.extend Ecore::UniqueIDGenerator
       model.extend ActiveModel::Naming if defined?(Rails)
       @classes ||= []
@@ -288,6 +291,7 @@ module Ecore
             Ecore::db[:documents].insert(:id => @id, :type => self.class.name, :name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :path => @path, :label_ids => @label_ids, :hidden => @hidden, :position => @position)
             Ecore::Audit.log(@id, self.class.name, @name, "created", @user_id)
             @changed_attributes = nil
+            run_custom_transactions(:append)
             success = true
           end 
         else # if not new record
@@ -331,6 +335,7 @@ module Ecore
             end
             Ecore::Audit.log(@id, self.class.name, @name, "updated", @user_id, @changed_attributes.inspect)
             @changed_attributes = nil
+            run_custom_transactions(:append)
             success = true
           end 
         end
@@ -343,6 +348,7 @@ module Ecore
         @id = nil if this_new_record
         @errors ||= {}
         @errors[:DB] = ['could not save document to repository']
+        raise e
       end
       return false unless success
       run_hooks(:after,:create) if this_new_record

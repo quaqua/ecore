@@ -42,7 +42,7 @@ module Ecore
     def build(type=self.class, child_attributes)
       raise(Ecore::SecurityTransgression, "not enough privileges for #{user_id} to create child in #{@absolute_path}") unless @can_write
       raise(TypeError, "type must be an Ecore::DocumentResource") unless type.respond_to?(:table_name)
-      type.new(@user_id, child_attributes)
+      type.new(@user_id, child_attributes.merge(:path => @absolute_path))
     end
 
     # adds an existing document to this array-holding document

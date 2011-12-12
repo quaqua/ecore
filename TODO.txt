@@ -1,2 +1,5 @@
 test:
  - uids with id1,id2,id3 within can_write? can_delete?
+ - cover:
+    - children.build
+    - children.create

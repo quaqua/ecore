@@ -49,15 +49,15 @@ module Ecore
           user_id = u.id_and_group_ids
         end
       end
-      p = Ecore::Document.find(user_id, :hidden => true).filter(:id => p_id).receive
+      @parent_cache = Ecore::Document.find(user_id, :hidden => true).filter(:id => p_id).receive
       @old_path = self.path
-      self.path = p.absolute_path
+      self.path = @parent_cache.absolute_path
       @path_changed = self.path
-      @acl_read = p.acl_read
+      @acl_read = @parent_cache.acl_read
       @acl_read << ",#{@user_id}" unless @acl_read.include?(@user_id)
-      @acl_write = p.acl_write
+      @acl_write = @parent_cache.acl_write
       @acl_write << ",#{@user_id}" unless @acl_write.include?(@user_id)
-      @acl_delete = p.acl_delete
+      @acl_delete = @parent_cache.acl_delete
       @acl_delete << ",#{@user_id}" unless @acl_delete.include?(@user_id)
     end
 

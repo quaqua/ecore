@@ -27,11 +27,22 @@ module Ecore
     #   mydocument.children.create(MyDocument, :name => 'test', :bla => 'bla')
     #   # => <newchild_of_mydocument>
     #
-    def create(type, child_attributes)
+    def create(type=self.class, child_attributes={})
+      child = build(type,child_attributes)
+      child if push(child)
+    end
+
+    # just prepares a new object of type
+    # returning the new object but does not save anything
+    # to the repository yet.
+    #
+    # e.g.:
+    #   mydocument.children.build(MyDocument, :name => 'test')
+    #   # => <MyDocumentInstance>
+    def build(type=self.class, child_attributes)
       raise(Ecore::SecurityTransgression, "not enough privileges for #{user_id} to create child in #{@absolute_path}") unless @can_write
       raise(TypeError, "type must be an Ecore::DocumentResource") unless type.respond_to?(:table_name)
-      child = type.new(@user_id, child_attributes)
-      child if push(child)
+      type.new(@user_id, child_attributes)
     end
 
     # adds an existing document to this array-holding document

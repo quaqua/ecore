@@ -2,6 +2,7 @@ require "bundler/gem_tasks"
 
 namespace :ecore do
   require 'rspec/core/rake_task'
+  require 'rdoc/task'
 
   RSpec::Core::RakeTask.new do |spec|
     #spec.spec_opts = "--format nested --color --fail-fast"
@@ -19,6 +20,11 @@ namespace :ecore do
     cov.test_files = FileList['spec/spec*.rb']
     cov.rcov_opts << '--exclude gem' << '--exclude spec_helper.rb' #%q[--exclude "gem"]
     # t.verbose = true     # uncomment to see the executed command
+  end
+
+  Rake::RDocTask.new do |rd|
+    rd.main = "README.rdoc"
+    rd.rdoc_files.include("README.rdoc", "SPEC-2.0.txt", "lib/**/*.rb")
   end
   
   description = "ecore migration script to run before ecore:spec"

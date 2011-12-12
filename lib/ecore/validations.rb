@@ -8,8 +8,24 @@ module Ecore
       # validate attribute for specific properties. if type was
       # set with option(:nil => false), a validate :presence, :fieldname
       # has been setup automatically
+      # 
       # e.g.:
-      # validate :presence, :firstname
+      #   validate :presence, :firstname
+      #
+      # Also, custom validations can be defined by providing the method's
+      # name. You can access the @errors hash directly. The return state
+      # of the custom method defines, if the validation and update process
+      # will resume or fail
+      #
+      # e.g.:
+      #   validate :my_custom_validation
+      #
+      #   private
+      #
+      #   def my_custom_validation
+      #     @errors[:theta] = ['must be greater 10']
+      #     false
+      #   end
       def validate( type=nil, name=nil, &block )
         @validations ||= []
         if type and name

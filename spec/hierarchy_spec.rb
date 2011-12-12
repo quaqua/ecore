@@ -219,4 +219,13 @@ describe "Document Hierarchy" do
     d.reload.path.should == "/#{e.id}/#{b.id}/#{c.id}"
   end
 
+  it "receives all chilren recursively" do
+    a,b,c,d = create_contacts(4)
+    a.children << b
+    b.children << c
+    c.children << d
+    a.children.size.should == 1
+    a.children(:reload => true, :recursive => true).size.should == 3
+  end
+
 end

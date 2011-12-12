@@ -19,14 +19,15 @@ module Ecore
     # example:
     #   mydocument.children(:exec => false).where(:name => 'test').receive(:all)
     #
-    def children(options={:type => nil, :get_dataset => false, :reload => false, :preconditions => {:hidden => false}})
+    def children(options={:type => nil, :get_dataset => false, :recursive => false, :reload => false, :preconditions => {:hidden => false}})
       return @children_cache if @children_cache and !options[:get_dataset] and !options[:reload]
       klass = Ecore::db[:documents]
       if options[:type]
         raise(TypeError, ":type must be an Ecore::DocumentResource") unless options[:type].respond_to?(:table_name)
         klass = Ecore::db[:"#{options[:type].table_name}"]
       end
-      query = klass.store_preconditions(@user_id,self.class.get_type_if_has_superclass,self,nil,(options[:preconditions] || {:hidden => false})).where(:path => absolute_path)
+      query = klass.store_preconditions((@group_ids || @user_id),self.class.get_type_if_has_superclass,self,nil,(options[:preconditions] || {:hidden => false}))
+      query = ( options[:recursive] ? query.where(:path.like("#{absolute_path}%")) : query.where(:path => absolute_path) )
       return query if options[:get_dataset]
       @children_cache = query.order(:position,:name).receive(:all)
     end

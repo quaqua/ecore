@@ -251,5 +251,33 @@ describe "Document main functionality" do
     c1 = Contact.create(u1, :name => 'c1')
     Ecore::Document.find(u1).filter(:name => 'c1').receive.id.should == c1.id
   end
+
+  it "skips hooks in destroy method" do
+    class Contact
+      include Ecore::DocumentResource
+      attribute :firstname, :string
+      attribute :lastname, :string
+      before :destroy, :set_firstname
+      
+      def set_firstname
+        self.firstname = "fn"
+      end
+    end
+    c0,c1 = create_contacts(2)
+    c0.destroy.should eq(true)
+    c0.firstname.should eq("fn")
+    c1.firstname = "firstname"
+    c1.destroy(:skip_hooks => true).should eq(true)
+    c1.firstname.should eq("firstname")
+  end
+
+  it "skips auditing in save method" do
+    c0 = create_contacts(1)[0]
+    audit_count = Ecore::db[:audits].count
+    c0.save
+    Ecore::db[:audits].count.should eq(audit_count+1)
+    c0.save(:skip_audit => true)
+    Ecore::db[:audits].count.should eq(audit_count+1)
+  end
     
 end

@@ -384,7 +384,7 @@ module Ecore
       return false unless can_delete?
       success = false
       begin
-        run_hooks(:before,:destroy)
+        run_hooks(:before,:destroy) unless options[:skip_hooks]
         Ecore::db.transaction do
           if trashed?
             Ecore::db[:"#{table_name}_trash"].where(:id => @id).delete
@@ -404,7 +404,7 @@ module Ecore
         end 
       end
       return false unless success
-      run_hooks(:after,:destroy)
+      run_hooks(:after,:destroy) unless options[:skip_hooks]
       success
     end
 

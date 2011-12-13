@@ -9,12 +9,11 @@ module Sequel
     # custom_repository_options can be used to bypass the default's
     # repository access validations (useful for classes like user, groups or informational classes)
     #
-    def store_preconditions(user_id,type,parent=nil,custom_repository_options=nil,additional_options={:hidden => false},custom_class=nil)
+    def store_preconditions(user_id,type,parent=nil,custom_class=nil,additional_options={:hidden => false})
       @parent = parent
       user_id = user_id.id_and_group_ids if user_id.is_a?(Ecore::User)
       @user_id = user_id
-      @custom_repository_class = custom_class
-      return filter(custom_repository_options) if @custom_repository_class
+      return self if @custom_repository_class = custom_class
       stmt = "acl_read LIKE '%#{Ecore::User.anybody_id}%'"
       if user_id.include?(',')
         user_id.split(',').each do |uid|

@@ -108,7 +108,7 @@ module Ecore
     # with a :user table selector
     def self.find(user_id_or_user, options={})
       user_id = user_id_or_user.is_a?(String) ? user_id_or_user : user_id_or_user.id
-      Ecore::db[:users].store_preconditions(user_id,nil,nil,options)
+      Ecore::db[:users].store_preconditions(user_id,nil,nil,options,nil,self)
     end
 
     # finds a user by user_id

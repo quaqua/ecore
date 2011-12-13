@@ -6,14 +6,15 @@ module Sequel
     # :receive method, so objects can be 
     # initialized and passed back.
     #
-    # user_options is only used in Ecore::User class
+    # custom_repository_options can be used to bypass the default's
+    # repository access validations (useful for classes like user, groups or informational classes)
     #
-    def store_preconditions(user_id,type,parent=nil,user_options=nil,additional_options={:hidden => false})
+    def store_preconditions(user_id,type,parent=nil,custom_repository_options=nil,additional_options={:hidden => false},custom_class=nil)
       @parent = parent
       user_id = user_id.id_and_group_ids if user_id.is_a?(Ecore::User)
       @user_id = user_id
-      @users = !user_options.nil?
-      return filter(user_options) if @users
+      @custom_repository_class = custom_class
+      return filter(custom_repository_options) if @custom_repository_class
       stmt = "acl_read LIKE '%#{Ecore::User.anybody_id}%'"
       if user_id.include?(',')
         user_id.split(',').each do |uid|
@@ -30,14 +31,14 @@ module Sequel
 
     def receive(all_or_first=:first)
       if all_or_first.to_sym == :all
-        if @users
-          all.map{ |u| Ecore::User.new(@user_id, u) }
+        if @custom_repository_class
+          all.map{ |u| @custom_repository_class.new(@user_id, u) }
         else
           Ecore::DocumentArray.new(@parent, all.map{ |document| get_document(@user_id,document)})
         end
       else
-        if @users
-          Ecore::User.new(@user_id, first)
+        if @custom_repository_class
+          @custom_repository_class.new(@user_id, first)
         else
           get_document(@user_id,first)
         end

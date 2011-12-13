@@ -36,10 +36,11 @@ module Sequel
           Ecore::DocumentArray.new(@parent, all.map{ |document| get_document(@user_id,document)})
         end
       else
+        f = first
         if @custom_repository_class
-          @custom_repository_class.new(@user_id, first)
+          @custom_repository_class.new(@user_id, f) if f
         else
-          get_document(@user_id,first)
+          get_document(@user_id,f) if f
         end
       end
     end

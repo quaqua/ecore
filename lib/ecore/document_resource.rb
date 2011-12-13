@@ -265,7 +265,10 @@ module Ecore
 
     # saves the document to the repository and returns true, if validations, hooks ans
     # actual saving have been successfully processed
-    def save
+    #
+    # options:
+    #  * <tt>:skip_audit</tt> - Boolean. Skips audit logging. This can be useful, if save is called multiple times for a similar action
+    def save(options={})
       raise StandardError, "table does not exist yet in the database (run #{self.class.table_name.to_s.classify}.migrate)" unless Ecore::db.table_exists?(table_name)
       return false unless run_validations
       this_new_record = new_record?
@@ -289,7 +292,7 @@ module Ecore
                                                           :updated_at => @updated_at,
                                                           :updated_by => @updated_by))
             Ecore::db[:documents].insert(:id => @id, :type => self.class.name, :name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :path => @path, :label_ids => @label_ids, :hidden => @hidden, :position => @position)
-            Ecore::Audit.log(@id, self.class.name, @name, "created", @user_id)
+            Ecore::Audit.log(@id, self.class.name, @name, "created", @user_id) unless options[:skip_audit]
             @changed_attributes = nil
             run_custom_transactions(:append)
             success = true
@@ -333,7 +336,7 @@ module Ecore
                 child.save
               end
             end
-            Ecore::Audit.log(@id, self.class.name, @name, "updated", @user_id, @changed_attributes.inspect)
+            Ecore::Audit.log(@id, self.class.name, @name, "updated", @user_id, @changed_attributes.inspect) unless options[:skip_audit]
             @changed_attributes = nil
             run_custom_transactions(:append)
             success = true

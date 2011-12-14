@@ -73,7 +73,7 @@ module Ecore
           user_id = u.id_and_group_ids
         end
       end
-      @parent_cache = Ecore::Document.find(user_id).where(:id => parent_id).receive
+      @parent_cache = Ecore::Document.find(user_id, :hidden => true).where(:id => parent_id).receive
     end
 
     # returns all ancestors of this document

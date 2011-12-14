@@ -190,6 +190,7 @@ module Ecore
       #   # => mydefclassinst
       #
       def find(user_id_or_user, options={:trashed => false, :hidden => false})
+        options[:hidden] = true if hidden?
         Ecore::db[:"#{table_name}#{"_trash" if options.delete(:trashed)}"].store_preconditions(user_id_or_user,get_type_if_has_superclass,nil,nil,options)
       end
 

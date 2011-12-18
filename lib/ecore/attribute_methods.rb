@@ -15,12 +15,12 @@ module Ecore
 
     def create_attribute_methods(name, type, options, link=false)
       send(:define_method, :"#{name}=", lambda{ |val|
-        if type == :integer
+        if type == :integer || type == Fixnum
           val = val.to_i if val.is_a?(String) && val.match(/^\d+$/)
-        elsif type == :float || type == :double
+        elsif type == :float || type == :double || type == Float
           val = val.sub(',','.').to_f if val.is_a?(String) && val.match(/^\d+[\.,\,]{0,1}\d*$/)
           val = val.to_f if val.is_a?(Integer)
-        elsif type == :datetime || type == :date
+        elsif type == :datetime || type == :date || type == Date || type == DateTime
           if val.is_a?(String)
             if val.size > 10
               val = Time.parse(val)
@@ -30,7 +30,7 @@ module Ecore
           end
           val = Time.at(val) if val.is_a?(Float)
           val = val.to_date if type == :date && val.is_a?(Time)
-        elsif type == :boolean
+        elsif type == :boolean || type == TrueClass
           val = (val.is_a?(TrueClass) || 
                  (val.is_a?(String) && (val == "1" || val.downcase[0,1] == "t")) ||
                  (val.is_a?(Integer) && val == 1)) ? true : false

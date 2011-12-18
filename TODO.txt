@@ -4,3 +4,4 @@ test:
     - children.build
     - children.create
  - auditing destruction of document_resource and user
+ - check if path is getting to long (>255) and raise error if so

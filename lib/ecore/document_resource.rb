@@ -447,9 +447,14 @@ module Ecore
       self
     end
 
-    # returns the updated_by as a Ecore::User instance
+    # returns the updated_by as an Ecore::User object
     def updater
       Ecore::User.first(@updated_by)
+    end
+
+    # returns the created_by field as an Ecore::User object
+    def creator
+      Ecore::User.first(@created_by)
     end
 
     private

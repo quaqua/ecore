@@ -40,7 +40,7 @@ module Ecore
     # Sets the parent_id (and calculates the full path of parent, so it can
     # be set without any further effort.
     def parent_id=(p_id)
-      return if p_id.empty? || p_id == parent_id
+      return if p_id.nil? || p_id.empty? || p_id == parent_id
       user_id = @user_id
       if @group_ids
         user_id = @group_ids

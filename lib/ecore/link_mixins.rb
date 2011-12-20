@@ -23,6 +23,15 @@ module Ecore
       Ecore::Link.create(@user_id, :name => @name, :orig_document_id => @id, :orig_document_type => self.class.name, :path => link_path)
     end
 
+    # Returns all links this document is linked with
+    def links(options={:get_dataset => false, :reload => false, :preconditions => {:hidden => false}})
+      return @links_chache if @links_chache and !options[:get_dataset] and !options[:reload]
+      query = Ecore::db[:"ecore/links"].store_preconditions((@group_ids || @user_id),self.class.get_type_if_has_superclass,self,nil,(options[:preconditions] || {:hidden => false}))
+      query = query.where(:orig_document_id => id)
+      return query if options[:get_dataset]
+      @links_chache = query.order(:name,:created_at).receive(:all)
+    end
+
     private
 
     def destroy_link

@@ -74,4 +74,13 @@ describe "Document Links" do
     l1.children(:reload => true).size.should eq(2)
   end
 
+  it "returns all links this document is linked with" do
+    c1,c2,c3,c4 = create_contacts(4)
+    l1 = c1.link_to(c2.absolute_path).reload
+    l2 = c1.link_to(c3.absolute_path).reload
+    c1.links.size.should eq(2)
+    c1.links.first.id.should eq(l1.id)
+    c1.links.last.id.should eq(l2.id)
+  end
+
 end

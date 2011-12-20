@@ -26,7 +26,16 @@ module Ecore
       self
     end
 
+    def children(options={:type => nil, :get_dataset => false, :recursive => false, :reload => false, :preconditions => {:hidden => false}})
+      orig_document.children(options)
+    end
+
     private
+
+    def orig_document
+      return @orig_document if @orig_document
+      @orig_document = Ecore::Document.find(@group_ids || @user_id).filter(:id => self.orig_document_id).receive
+    end
 
     def setup_orig_document_attributes
       return if new_record?

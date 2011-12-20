@@ -63,4 +63,15 @@ describe "Document Links" do
     Ecore::Link.find(@user1_id).filter(:id => link.id).receive.should == nil
   end
 
+  it "will return the original document's children" do
+    c1,c2,c3,c4 = create_contacts(4)
+    l1 = c1.link_to(c2.absolute_path)
+    l1.children.size.should eq(0)
+    c1.children.size.should eq(0)
+    c1.children << c3
+    c1.children << c4
+    c1.children(:reload => true).size.should eq(2)
+    l1.children(:reload => true).size.should eq(2)
+  end
+
 end

@@ -33,6 +33,14 @@ share an Ecore::DocumentResource with anybody
 get number of children of an Ecore::DocumentResource
   contact.children.count
 
+=== Move a document
+
+  contact.children << document
+  # => nil
+
+  contact.children.first
+  # => document
+
 == License
 
 This software is released under the MIT license (see mit-license.txt for details)

@@ -398,9 +398,9 @@ module Ecore
             Ecore::db[table_name].where(:id => @id).delete
             Ecore::db[:documents].where(:id => @id).delete
           end
-          children(:preconditions => {:hidden => true}).each do |child|
+          children(:reload => true, :preconditions => {:hidden => true}).each do |child|
             raise(SavingFaild, "could not destroy #{child.name}") unless child.destroy(options)
-          end
+          end unless is_a?(Ecore::Link)
           success = true
         end 
       end

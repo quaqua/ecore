@@ -85,14 +85,18 @@ module Ecore
     #   doc.ancestors(:reverse)
     #   # => [parent_doc,parent_of_parent]
     #
-    def ancestors(reverse=nil,reload=nil)
+    def ancestors(reverse=nil,reload=nil,options={})
       return @ancestors_cache if @ancestors_cache && reload.nil?
       p = path.split('/')
       p.reverse! if reverse == :reverse
       @ancestors_cache = p.inject([]) do |arr,doc_id|
         if doc_id and !doc_id.empty?
           user_id = (@group_ids || @user_id)
-          arr << Ecore::Document.find(user_id).where(:id => doc_id).receive
+          if options[:type]
+            arr << options[:type].find(user_id).where(:id => doc_id).receive
+          else
+            arr << Ecore::Document.find(user_id).where(:id => doc_id).receive
+          end
         end
         arr
       end

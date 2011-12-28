@@ -1,37 +1,126 @@
 = ecore
 
-update to version 2.0
-
 ecore is a content repository implemented in Ruby, using SQL as a backend.
-It is ready to use with RubyOnRails.
+It is ready to use with RubyOnRails but can also be used with Sinatra or even
+desktop apps.
 
 It uses Sequel to speak with SQL. That makes ecore a powerful and well-proofed
-content repository with journaling-like behaviour, versioning and a full featured
-user control mechanism (including an auditing)
+content repository with trash-restore, versioning, auditing and a full featured
+user control mechanism. It's hierarchical structure is designed to be very fast.
+If you want not only direct children but recursively parse through a document's
+children, it can be done with a single SQL query. Check examples.
 
-More documentation following.
+== Installation
+
+Add to your Gemfile:
+  gem 'ecore', :git => "git://github.com/quaqua/ecore.git"
+
+== Setup
+
+If you plan to use rails, you should create an initializer, which
+calls 
+
+  Ecore::Repository.init "config/ecore.yml"
+
+and of course you will need a config/ecore.yml file, which has a couple
+of settings, the most important one is the database configuration. You can
+simple copy the ecore.yml.example file from the root directory of ecore
+
+=== Example MySQL configuraiton in ecore.yml
+
+  db:
+    adapter: "mysql"
+    database: "dbname"
+    user: "user"
+    password: "password"
+    host: "localhost"
+
+== Creating an repository document resource
+
+  class MyClass
+    include Ecore::DocumentResource
+    default_attributes
+  end
+
+This declares a MyClass with default_attributes set (this method-call is mandatory).
+It sets up required attributes like :name, :created_by, :id, ...
+
+=== Class declaration options
+
+  class MyClass
+    include Ecore::DocumentResource
+    default_attributes
+    
+    attribute :status, :boolean, :default => false
+  end
+
+For more details about attribute options, please refer to the rdoc file or visit
+http://tastenwerk.com/ecore/api.
+
+=== setup and migrating the repository
+
+To create the (underlying) SQL structure, call
+  MyClass.migrate
+
+In Rails, this would be done in a rake-task, similar like that:
+
+  task :setup => :environment do
+    Ecore::Repository.migrate
+    MyClass.migrate
+  end
+
+That's basically, what you need to start working with ecore. 
+
+=== Calling migrate again
+
+You can simply modify your document resource by adding attributes or removing and
+then invoke the migrate method again. It will try to update the repositories db
+tables and add new things. Mind the SQL specific things of Sequel, when adding columns
+of type :string, you should use attribute(:mystring, String) instead of :string.
 
 == Usage examples
 
-create document definition by mixing in the Ecore::DocumentResource module
+Let's take a contact with firstname and lastname
 
   class Contact
     include Ecore::DocumentResource
 
-    attribute :firstname, :string
+    attribute :firstname, String
+    attribute :lastname, String
   end
 
+You can't do anything without a user (that's the main benefit of ecore!). Let's create
+a user:
+
+  current_user = Ecore::User.create("CREATED BY SYSTEM", :name => "test user", :password => "testpass", :role => "default")
+
+In opposite to ActiveRecord, you need to pass your current user to any operation with ecore.
+
 instantiate an Ecore::DocumentResource
-  Contact.new(current_user, :firstname => 'Rodger')
+  Contact.new(current_user, :firstname => 'Rodger', :lastname => 'Miles')
 
 find an Ecore::DocumentResource
   contact = Contact.find(current_user).filter(:firstname.like('Rodger')).receive
 
+tell, if userB can write on contact
+  contact.can_write?(user_b)
+  # => false
+
+this would consiquently not find any object, if userB is doing the lookup
+  Contact.find(user_b).filter(:id => contact.id).receive
+  # => nil
+
 share an Ecore::DocumentResource with anybody
   contact.share(Ecore::User.anybody,'r')
+  # => true # if current_user can_write? to contact
 
 get number of children of an Ecore::DocumentResource
   contact.children.count
+  # => 0
+
+find all contacts within a folder
+  myfolder.children(:recursive => true, :type => Contact).receive(:all)
+  => <Ecore::DocumentArray of type Contact only>
 
 === Move a document
 

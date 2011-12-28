@@ -127,15 +127,16 @@ module Ecore
 
   end
 
-  # initialize the repository. This line is required in order to start working
-  # with ecore.
-  #
-  # options
-  #
-  # * <tt>config_file</tt> - the configuration file that should be used for this ecore session
-  #
   module Repository
 
+    # initializes ecore, reads configuration settings from
+    # given configuration file (or defaults to config/ecore.yml)
+    #
+    # A sample ecore.yml file can be found on /ecore.yml.example
+    # options
+    #
+    # * <tt>config_file</tt> - the configuration file that should be used for this ecore session
+    #
     def self.init(config_file=File.join("config","ecore.yml"))
       require 'yaml'
       raise ConfigError.new("'#{config_file}' could not be found") unless ::File::exists?(config_file)
@@ -143,14 +144,17 @@ module Ecore
       tmpenv.each_pair do |key,value|
         Ecore::env.set key.to_sym, value
       end
-      #Ecore::Document.migrate
-      #Ecore::Link.migrate
-      #Ecore::Label.migrate
-      #Ecore::User.migrate
-      #Ecore::Document.migrate
-      #Ecore::Audit.migrate
       Ecore::logger.info("ecore initialized.")
       #Ecore::Blob.default_fs_path = Ecore::env.get(:default_fs_path) || File::join('db','ecore_datastore')
+    end
+
+    # migrates all necessary tables to run ecore
+    def self.migrate
+      Ecore::Document.migrate
+      Ecore::Link.migrate
+      Ecore::Label.migrate
+      Ecore::User.migrate
+      Ecore::Audit.migrate
     end
 
 

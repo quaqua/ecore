@@ -6,6 +6,8 @@ class Comment
   default_attributes
 
   attribute :name, :string
+  attribute :body_text, :text
+
   validate :presence, :name
 
 end
@@ -41,7 +43,7 @@ describe Ecore::ModelResource do
   end
 
   it "builds a new Ecore::ModelResource but does not save it to the repository" do
-    c = Comment.new(nil,:name => 'test')
+    c = Comment.new(nil,:name => 'test', :body_text => 'body test')
     c.name.should eq('test')
   end
 
@@ -66,6 +68,11 @@ describe Ecore::ModelResource do
   it "creates a new Ecore::ModelResource and stores the given user in created_by" do
     c = Comment.create!(@u1.id, :name => 'test')
     c.created_by.should eq(@u1.id)
+  end
+
+  it "creates a new Ecore::ModelResource and stores custom attribute body_text" do
+    c = Comment.create!(@u1, :name => 'test', :body_text => 'body')
+    Comment.find(@u1, :id => c.id).receive.body_text.should eq('body')
   end
 
   it "creates a new Ecore::ModelResource and stores the given user in created_by if full user object is given" do

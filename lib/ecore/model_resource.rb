@@ -74,6 +74,7 @@ module Ecore
         Ecore::db.create_table table_name do
           String  :id, :size => 8, :primary_key => true
           attrs.each_pair do |name, arr|
+            column name, :text, arr[1] if arr[0] == :text
             String name, arr[1] if arr[0] == :string || arr[0] == String
             Fixnum name, arr[1] if arr[0] == :integer || arr[0] == Fixnum
             DateTime name, arr[1] if arr[0] == :datetime || arr[0] == DateTime
@@ -140,8 +141,8 @@ module Ecore
       @classes
     end
 
-    attr_reader :attributes, :orig_attributes, :changed_attributes, :audit_action, :audit_summary
-    attr_accessor :id, :acl_read, :acl_write, :acl_delete, :label_ids, :deleted_by, :deleted_at
+    attr_reader :attributes, :orig_attributes, :changed_attributes
+    attr_accessor :id, :acl_read, :acl_write, :acl_delete, :label_ids, :deleted_by, :deleted_at, :audit_save_action_name, :audit_name, :audit_summary
 
     # Initialize a new dataset with given
     # attributes. For available attributes see the
@@ -171,7 +172,6 @@ module Ecore
         @id = self.class.gen_unique_id
         init_default_attrs
         Ecore::db[self.class.table_name].insert(attributes.merge(:id => @id, :created_at => Time.now, :created_by => @user_id, :updated_by => @user_id))
-        Ecore::Audit.log(@id, self.class.name, @name, "created", Ecore::User.anybody_id) unless self.class.skip_audit?
         success = true
       else
         run_hooks(:before,:save)
@@ -179,9 +179,9 @@ module Ecore
         save_attrs.delete(:created_at)
         save_attrs.delete(:id)
         Ecore::db[self.class.table_name].where(:id => @id).update(save_attrs)
-        Ecore::Audit.log(@id, self.class.name, @name, "updated", Ecore::User.anybody_id, @changed_attributes.inspect) unless self.class.skip_audit?
         success = true
       end
+      Ecore::Audit.log(@id, self.class.name, audit_name, audit_save_action_name, (@user_id || Ecore::User.anybody_id)) unless self.class.skip_audit?
       run_hooks(:after,:create) if this_new_record
       run_hooks(:after,:update) unless this_new_record
       run_hooks(:after,:save)
@@ -200,6 +200,18 @@ module Ecore
     def destroy
       return true if Ecore::db[self.class.table_name].filter(:id => @id).delete
       false
+    end
+
+    # returns the name which should be set when auditing
+    # defaults to @audit_name or @name
+    def audit_name
+      @audit_name || @name
+    end
+
+    # returns the text which should be used to name
+    # the action performed
+    def audit_save_action_name
+      @audit_save_action_name || "saved"
     end
 
     private
@@ -224,6 +236,7 @@ module Ecore
       @created_by = @user_id
       @updated_by = @user_id
     end
+
 
   end
 end

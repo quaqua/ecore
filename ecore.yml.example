@@ -1,0 +1,10 @@
+logger:
+  level: DEBUG
+#  file: "log/ecore.log"
+
+db:
+  adapter: "sqlite"
+  database: "db/plus.sqlite3"
+
+datastore:
+  path: "db/datastore"

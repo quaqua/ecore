@@ -19,7 +19,17 @@ module Ecore
     # example:
     #   mydocument.children(:exec => false).where(:name => 'test').receive(:all)
     #
-    def children(options={:type => nil, :get_dataset => false, :recursive => false, :reload => false, :preconditions => {:hidden => false}})
+    # options:
+    #
+    #  * <tt>:type</tt> - an exclusive class name, which should be filtered
+    #  * <tt>:get_dataset</tt> - if the database call should not be done yet (gives you ability to extend query with sequel syntax)
+    #  * <tt>:recursive</tt> - finds any child in full hierarchical depth
+    #  * <tt>:reload</tt> - forces reloading the children from the database (can be combined with any other option)
+    #  * <tt>:keep_cache</tt> - keeps the cache (in case of a special reload call, this can save time of another database call after the special one
+    #  * <tt>:preconditions</tt> - a hash containing preconditions for the store_preconditions call in the Sequel::Dataset extender
+    #    * <tt>:hidden</tt> - include hidden files in search (default: false)
+    #
+    def children(options={:type => nil, :get_dataset => false, :recursive => false, :keep_cache => true, :reload => false, :preconditions => {:hidden => false}})
       return @children_cache if @children_cache and !options[:get_dataset] and !options[:reload]
       klass = Ecore::db[:documents]
       if options[:type]
@@ -29,7 +39,9 @@ module Ecore
       query = klass.store_preconditions((@group_ids || @user_id),self.class.get_type_if_has_superclass,self,nil,(options[:preconditions] || {:hidden => false}))
       query = ( options[:recursive] ? query.where(:path.like("#{absolute_path}%")) : query.where(:path => absolute_path) )
       return query if options[:get_dataset]
-      @children_cache = query.order(:position,:name).receive(:all)
+      children_cache = query.order(:position,:name).receive(:all)
+      return children_cache if options[:keep_cache]
+      @children_cache = children_cache
     end
 
     # extracts last id from path (which should be parent_id)
@@ -93,7 +105,8 @@ module Ecore
         if doc_id and !doc_id.empty?
           user_id = (@group_ids || @user_id)
           if options[:type]
-            arr << options[:type].find(user_id).where(:id => doc_id).receive
+            k = options[:type].find(user_id).where(:id => doc_id).receive
+            arr << k if k
           else
             arr << Ecore::Document.find(user_id).where(:id => doc_id).receive
           end

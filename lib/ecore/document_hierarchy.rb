@@ -108,7 +108,8 @@ module Ecore
             k = options[:type].find(user_id).where(:id => doc_id).receive
             arr << k if k
           else
-            arr << Ecore::Document.find(user_id).where(:id => doc_id).receive
+            d = Ecore::Document.find(user_id).where(:id => doc_id).receive
+            arr << d if d
           end
         end
         arr

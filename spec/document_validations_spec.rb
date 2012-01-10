@@ -7,6 +7,8 @@ describe "Document validations" do
     Ecore::db.drop_table(:custom_validations) if Ecore::db.table_exists?(:custom_validations)
     Ecore::db.drop_table(:custom_validation2s) if Ecore::db.table_exists?(:custom_validation2s)
     Ecore::db.drop_table(:custom_validation3s) if Ecore::db.table_exists?(:custom_validation3s)
+    Ecore::db.drop_table(:custom_validation4s) if Ecore::db.table_exists?(:custom_validation4s)
+    Ecore::db.drop_table(:custom_validation5s) if Ecore::db.table_exists?(:custom_validation5s)
     @user1_id = "1"
     class ValA
       include Ecore::DocumentResource
@@ -86,5 +88,28 @@ describe "Document validations" do
     cv.run_validations.should == true
     cv.errors.should == {}
   end
+
+  it "validates uniqueness of an attribute" do
+    class CustomValidation4
+      include Ecore::DocumentResource
+      attribute :a, :string
+      validate :uniqueness, :a
+    end
+    CustomValidation4.migrate
+    CustomValidation4.new(@user1_id, :name => 'a1', :a => 'a').save.should eq(true)
+    CustomValidation4.new(@user1_id, :name => 'a2', :a => 'a').save.should eq(false)
+  end
+
+  it "validates email_format an attribute" do
+    class CustomValidation4
+      include Ecore::DocumentResource
+      attribute :a, :string
+      validate :email_format, :a
+    end
+    CustomValidation4.migrate
+    CustomValidation4.new(@user1_id, :name => 'a1', :a => 'ab@test.com').save.should eq(true)
+    CustomValidation4.new(@user1_id, :name => 'a2', :a => 'a').save.should eq(false)
+  end
+
 end
   

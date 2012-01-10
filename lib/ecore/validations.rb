@@ -17,6 +17,12 @@ module Ecore
       # of the custom method defines, if the validation and update process
       # will resume or fail
       #
+      # available types:
+      #
+      #  * <tt>:presence</tt> - check if attribute is not nil or empty
+      #  * <tt>:uniqueness</tt> - check, if value for attribute is unique in repository
+      #  * <tt>:email_format</tt> - check, if value is a valid email address format
+      #
       # e.g.:
       #   validate :my_custom_validation
       #
@@ -53,7 +59,7 @@ module Ecore
               if (send(:"#{name}").nil? or send(:"#{name}").empty?)
                 true
               else
-                if record = Ecore::db[self.class.tablename.to_sym][name.to_sym => send(:"#{name}")]
+                if record = Ecore::db[self.class.table_name.to_sym][name.to_sym => send(:"#{name}")]
                   if record[:id] != @id
                     @errors["#{name}".to_sym] = [("duplicate entry %s" % send(:"#{name}"))]
                     false

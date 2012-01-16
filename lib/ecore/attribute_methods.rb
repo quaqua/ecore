@@ -7,6 +7,12 @@ module Ecore
 
     attr_accessor :db_setup_attributes
 
+    # Attribute to be defined
+    #
+    # attributes:
+    #  * <tt>name</tt> - attribute name
+    #  * <tt>type</tt> - type (see datatypes for a full list)
+    #  * <tt>options:</tt> - options compatible with sequel
     def attribute( name, type, options={} )
       @db_setup_attributes ||= {}
       @db_setup_attributes[name.to_sym] = [type, options]

@@ -122,6 +122,14 @@ describe "Document Hierarchy" do
     e.ancestors.first.id.should == d.id
   end
 
+  it "finds ancestors and includes itself" do
+    a,b,c,d,e = create_contacts(5)
+    a.children << b
+    b.children << c
+    c.ancestors(nil, nil, :include_self => true).first.id.should == a.id
+    c.ancestors.last.id.should == c.id
+  end
+
   it "moves a node to another parent" do
     a,b,c = create_contacts(3)
     a.children << b

@@ -24,7 +24,7 @@ describe "DocumentResource definitions" do
     Ecore::db.table_exists?(:document_def_as).should == false
     DocumentDefA.migrate
     Ecore::db.table_exists?(:document_def_as).should == true
-    Ecore::db[:document_def_as].columns.size.should == 16
+    Ecore::db[:document_def_as].columns.size.should == 17
   end
 
 =begin # caused to many problems for debugging, cause rspec errors became unreadable
@@ -43,7 +43,7 @@ describe "DocumentResource definitions" do
       attribute :myname, String
     end
     DocumentDefB.migrate
-    Ecore::db[:document_def_bs].columns.size.should == 17
+    Ecore::db[:document_def_bs].columns.size.should == 18
   end
 
   it "adds a new column to DocumentDefB by just changing the class definition and runnging DocumentDefB.migrate" do
@@ -53,7 +53,7 @@ describe "DocumentResource definitions" do
       attribute :other, Integer
     end
     DocumentDefB.migrate
-    Ecore::db[:document_def_bs].columns.size.should == 18
+    Ecore::db[:document_def_bs].columns.size.should == 19
   end
 
   it "default creates :name attribute" do

@@ -15,7 +15,8 @@ module Ecore
         String  :path, :null => false
         column  :position, :integer
         String  :updated_by, :null => false
-        String  :label_ids
+        String  :label_ids, :default => ""
+        String  :tags, :default => ""
         column  :hidden, :boolean
         index :type
         index :name
@@ -23,6 +24,8 @@ module Ecore
         index :path
         index :updated_by
         index :updated_at
+        index :label_ids
+        index :tags
       end unless Ecore::db.table_exists?(:documents)
       Ecore::db.create_table :documents_trash do
         String  :id, :size => 8, :primary_key => true
@@ -34,7 +37,8 @@ module Ecore
         String  :updated_by, :null => false
         column  :deleted_at, :datetime, :null => false
         String  :deleted_by, :null => false
-        String  :label_ids
+        String  :label_ids, :default => ""
+        String  :tags, :default => ""
         column  :hidden, :boolean
         column  :position, :integer
         index :type

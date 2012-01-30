@@ -82,12 +82,14 @@ module Ecore
             String  :acl_write, :null => false
             String  :acl_delete, :null => false
             String  :label_ids, :default => ""
+            String  :tags, :default => ""
 
             index   :type
             index   :name
             index   :path
             index   :acl_read
             index   :label_ids
+            index   :tags
 
             attrs.each_pair do |name, arr|
               column name, :text, arr[1] if arr[0] == :text
@@ -110,6 +112,7 @@ module Ecore
             String  :acl_write, :null => false
             String  :acl_delete, :null => false
             String  :label_ids, :default => ""
+            String  :tags, :default => ""
 
             index   :id
             index   :updated_at
@@ -136,6 +139,7 @@ module Ecore
             String  :acl_write, :null => false
             String  :acl_delete, :null => false
             String  :label_ids, :default => ""
+            String  :tags, :default => ""
 
             DateTime :deleted_at, :null => false
             String  :deleted_by, :null => false
@@ -235,7 +239,7 @@ module Ecore
     end
 
     attr_reader :attributes, :orig_attributes, :changed_attributes, :user_id
-    attr_accessor :id, :acl_read, :acl_write, :acl_delete, :label_ids, :deleted_by, :deleted_at
+    attr_accessor :id, :acl_read, :acl_write, :acl_delete, :label_ids, :tags, :deleted_by, :deleted_at
 
     def table_name
       self.class.table_name
@@ -290,9 +294,10 @@ module Ecore
                                                           :acl_write => @acl_write, 
                                                           :acl_delete => @acl_delete, 
                                                           :label_ids => @label_ids,
+                                                          :tags => @tags,
                                                           :updated_at => @updated_at,
                                                           :updated_by => @updated_by))
-            Ecore::db[:documents].insert(:id => @id, :type => self.class.name, :name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :path => @path, :label_ids => @label_ids, :hidden => @hidden, :position => @position)
+            Ecore::db[:documents].insert(:id => @id, :type => self.class.name, :name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :path => @path, :label_ids => @label_ids, :tags => @tags, :hidden => @hidden, :position => @position)
             Ecore::Audit.log(@id, self.class.name, @name, "created", @user_id) unless options[:skip_audit]
             @changed_attributes = nil
             run_custom_transactions(:append)
@@ -312,9 +317,10 @@ module Ecore
                                                                             :acl_write => @acl_write, 
                                                                             :acl_delete => @acl_delete, 
                                                                             :label_ids => @label_ids,
+                                                                            :tags => @tags,
                                                                             :updated_at => Time.now,
                                                                             :updated_by => @user_id))
-            Ecore::db[:documents].where(:id => @id).update(:name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :path => @path, :label_ids => @label_ids, :hidden => @hidden, :position => @position)
+            Ecore::db[:documents].where(:id => @id).update(:name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :path => @path, :label_ids => @label_ids, :tags => @tags, :hidden => @hidden, :position => @position)
             if @acl_changed && @acl_changed.is_a?(Array)
               Ecore::Document.find(@group_ids || @user_id).where(:path.like("#{absolute_path}%")).receive(:all).each do |child|
                 @acl_changed.each do |acl|
@@ -465,6 +471,7 @@ module Ecore
       @acl_delete ||= @user_id.to_s
       @path = "" if @path.nil?
       @label_ids = ""
+      @tags = ""
       @type = self.class.get_type_if_has_superclass
       @created_at = Time.now
       @updated_at = Time.now

@@ -471,9 +471,9 @@ module Ecore
       @acl_delete ||= @user_id.to_s
       @path = "" if @path.nil?
       @label_ids = ""
-      @tags = ""
+      @tags = "" if @tags.nil?
       @type = self.class.get_type_if_has_superclass
-      @created_at = Time.now
+      @created_at ||= Time.now
       @updated_at = Time.now
       @created_by = @user_id
       @updated_by = @user_id

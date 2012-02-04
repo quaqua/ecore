@@ -78,9 +78,19 @@ module Ecore
       new(nil, :name => "anybody")
     end
 
+    # Returns the system user
+    def self.system
+      new(nil, :name => "system")
+    end
+
     # Returns the id of the anybody user
     def self.anybody_id
       "AAAAAAAA"
+    end
+
+    # Returns the id of the system user
+    def self.system_id
+      "SYSTEM00"
     end
 
     # Returns the number of (real) users in the
@@ -142,7 +152,9 @@ module Ecore
     #
     def initialize(user_id_or_user,attrs={})
       if attrs[:name] && attrs[:name] == 'anybody'
-        @id = Ecore::User.anybody_id 
+        @id = Ecore::User.anybody_id
+      elsif attrs[:name] && attrs[:name] == 'system'
+        @id = Ecore::User.system_id
       elsif user_id_or_user
         @user_id = user_id_or_user.is_a?(String) ? user_id_or_user : user_id_or_user.id
       end

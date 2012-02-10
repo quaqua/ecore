@@ -54,6 +54,16 @@ describe "Document Links" do
     link.reload.name.should eq("different name")
   end
 
+  it "will return own name and id for link (not original one's)" do
+    c1,c2 = create_contacts(2)
+    link = c1.link_to(c2.absolute_path, :name => "L1")
+    link_id = link.id
+    link = Ecore::Document.find(@user1_id).where(:id => link_id).receive
+    link.id.should eq(link_id)
+    link.name.should eq("L1")
+    
+  end
+
   it "will not affect original document if link is deleted" do
     c1,c2 = create_contacts(2)
     link = c1.link_to(c2.absolute_path)
@@ -118,8 +128,9 @@ describe "Document Links" do
     c1,c2 = create_contacts(2)
     link = c1.link_to(c2.absolute_path)
     link2 = link.link_to(c2.absolute_path)
+    c1.links.size.should eq(2)
     link.destroy.should eq(true)
-    c1.links.size.should eq(1)
+    c1.links(:reload => true).size.should eq(1)
     Ecore::Document.find(@user1_id).filter(:id => link2.id).receive.name.should eq("#{c1.name} 1")
   end
 

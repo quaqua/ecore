@@ -40,14 +40,13 @@ module Ecore
     def setup_orig_document_attributes
       return if new_record?
       self.orig_document_type.constantize.db_setup_attributes.each_pair do |name, type_options|
-        next if name == :name
+        next if [:name, :id].include? name
         self.class.create_attribute_methods(name, type_options[0], type_options[1], true)
       end
       attrs = Ecore::db[self.orig_document_type.underscore.pluralize.to_sym].first(:id => self.orig_document_id)
       if attrs.is_a?(Hash) && attrs.keys.size > 0
         attrs.each_pair do |name, val|
-          next if name == :type
-          next if name == :name
+          next if [:type, :name, :id].include? name
           send(:"#{name}=", val)
         end
       end
@@ -57,6 +56,7 @@ module Ecore
     def update_orig_document
       if changed_attributes
         changed_attributes.delete(:name)
+        changed_attributes.delete(:id)
         return if changed_attributes.size < 1
         Ecore::db[self.orig_document_type.underscore.pluralize.to_sym].filter(:id => self.orig_document_id).update(changed_attributes)
       end

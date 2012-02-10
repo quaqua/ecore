@@ -35,7 +35,8 @@ module Ecore
     end
 
     # Returns all links this document is linked with
-    def links(options={:get_dataset => false, :type => Ecore::Link, :reload => false, :preconditions => {:hidden => false}})
+    def links(options={})
+      options = {:get_dataset => false, :type => Ecore::Link, :reload => false, :preconditions => {:hidden => false}}.merge(options)
       return @links_chache if @links_chache and !options[:get_dataset] and !options[:reload]
       query = Ecore::db[options[:type].table_name].store_preconditions((@group_ids || @user_id),self.class.get_type_if_has_superclass,self,nil,(options[:preconditions] || {:hidden => false}))
       query = query.where(:orig_document_id => id)

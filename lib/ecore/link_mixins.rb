@@ -11,16 +11,27 @@ module Ecore
     # path.
     #
     # * <tt>link_path</tt> - The path, the link should point to
+    # * <tt>options</tt>
+    #   * <tt>:name</tt> - String, defaults to original document name
     #
     # examples:
     #   document.link_to("")
     #   # => <Ecore::Link @name => document.name, ...>
-    #   document.link_to(document.path)
-    #   # => nil
+    #   document.link_to(document.path, :name => "Link name")
+    #   # => <Ecore::Link @path => document.path, @name => "Link name" ...>
     #
-    def link_to(link_path)
-      raise(Ecore::LinkError, "cannot link to same path #{link_path}==#{path}") if link_path == path
-      Ecore::Link.create(@user_id, :name => @name, :orig_document_id => @id, :orig_document_type => self.class.name, :path => link_path)
+    def link_to(link_path, options={})
+      options = {:name => @name}.merge(options).merge(:orig_document_id => @id, :orig_document_type => self.class.name, :path => link_path)
+      if is_a?(Ecore::Link)
+        options[:orig_document_id] = orig_document_id
+        options[:orig_document_type] = orig_document_type
+      end
+      counter = 1
+      while link_path == path && (options[:name] == @name || Ecore::Document.find(@group_ids || @user_id).filter(:path => @path, :name => options[:name]).count > 0)
+        options[:name] = "#{@name} #{counter}"
+        counter += 1
+      end
+      Ecore::Link.create(@user_id, options)
     end
 
     # Returns all links this document is linked with

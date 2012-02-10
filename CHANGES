@@ -1,0 +1,42 @@
+Version 2.1.1 - 2012-02-10
+  - Links improved
+  - Ecore::User.system to be used as a "can-see everything"-user (if automated creation of objects is desired)
+
+Version 2.1 - 2011-12-08
+  - Links
+  - Access Control
+  
+Version 2 - 2011-11-30
+  - REDESIGNED whole structure to use sequel (no more active record)
+
+Version 1.1.1 - 2011-09-29
+  - Path is also a label. So no confusion about what's a path and what's a label. The first label of
+    a node does not make it dissapear from the root landscape, but moving a node to another node (which might
+    already be it's label), will make it dissapear from root and only make it visible there (and everywhere else
+    where it is labeled with)
+  - DataFile uses file_path instead of path to provide compatibility to path attribute
+  - :type attribute added to t.ecore_defaults
+    
+Version 1.1.0 - 2011-09-20
+  - Path attribute added. A path - in difference to label_node_ids - is a absolute path the node
+    will be associated with. This enables queries for elements deeper than level 1 with same
+    efficiency as with label_node_ids
+  - bugfix: Ecore::Node.first return nil if no node was found
+
+Version 1.0.5 - 2011-08-22
+  - Labels be filtered by node type
+
+Version 1.0.4 - 2011-07-12
+  - Comments added
+
+Version 1.0.3 - 2011-07-02
+  - Ecore::Labels extended. @node.find(:key1 => cond1, :key2 => cond2) and @node.find(:type => Contact, :key1 => cond) ...
+    can be used to find nodes within a already initialized nodes. This is very resource intensive on large datasets, because
+    every subnode (labeld with @node) will be checked for children and checked if those children do match) Also there is
+    no caching of the results yet
+    Still: @contact_folder.find(:type => Contact)  gives you a great tool to filter for nodes within all the depth of the hierarchy
+    and look for those nodes. In conjunction with the folder's :default_controller attribute, this can be very powerful
+
+Version 1.0.2 - 2011-06-25
+  - Ecore::DataFile comes natively with ecore
+  - Ecore::AuditLog has changed references in favour of working hand-written mappers

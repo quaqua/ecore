@@ -9,17 +9,13 @@ describe "Document Links" do
   before(:each) do
     Ecore::db[:contacts].delete
     Ecore::db[:"ecore/links"].delete
+    Ecore::db[:"documents"].delete
   end
 
   it "creates a link to an existing node on repository root" do
     c1,c2 = create_contacts(2)
     link = c1.link_to(c2.absolute_path)
     link.class.should == Ecore::Link
-  end
-
-  it "doesn't create a link if given path == current path of document" do
-    c1 = create_contacts(1)[0]
-    lambda{ c1.link_to("") }.should raise_error(Ecore::LinkError, "cannot link to same path #{c1.path}==#{c1.path}")
   end
 
   it "links any attribute call to the original document" do
@@ -44,9 +40,18 @@ describe "Document Links" do
     c1,c2 = create_contacts(2)
     link = c1.link_to(c2.absolute_path)
     link.name.should == c1.name
-    c1.update(:name => 'other')
-    link.name.should_not == c1.name
-    link.reload.name.should == c1.name
+    c1.update(:firstname => 'other')
+    link.firstname.should_not == c1.firstname
+    link.reload.firstname.should == c1.firstname
+  end
+
+  it "will not change original's name if link name is changed" do
+    c1,c2 = create_contacts(2)
+    link = c1.link_to(c2.absolute_path)
+    link.name = "different name"
+    link.save
+    c1.reload.name.should eq("c1")
+    link.reload.name.should eq("different name")
   end
 
   it "will not affect original document if link is deleted" do
@@ -81,6 +86,41 @@ describe "Document Links" do
     c1.links.size.should eq(2)
     c1.links.first.id.should eq(l1.id)
     c1.links.last.id.should eq(l2.id)
+  end
+
+  it "links to root level" do
+    c1,c2 = create_contacts(2)
+    link = c1.link_to("")
+    Ecore::Document.find(@user1_id).filter(:id => link.id).receive.path.should eq("") 
+  end
+
+  it "adds numbering to document names, if link is created in same path as original document" do
+    c1,c2 = create_contacts(2)
+    link = c1.link_to("")
+    link.name.should eq("#{c1.name} 1")
+    link = c1.link_to("")
+    link.name.should eq("#{c1.name} 2")
+    link = c1.link_to("")
+    link.name.should eq("#{c1.name} 3")
+    Ecore::Document.find(@user1_id).filter(:id => link.id).receive.name.should eq("#{c1.name} 3")
+  end
+
+  it "will link to original document if linking to a link" do
+    c1,c2 = create_contacts(2)
+    link = c1.link_to(c2.absolute_path)
+    link2 = link.link_to(c2.absolute_path)
+    link2.orig_document_type.should eq(c1.class.name)
+    link2.name.should eq("#{c1.name} 1")
+    Ecore::Document.find(@user1_id).filter(:id => link2.id).receive.name.should eq("#{c1.name} 1")
+  end
+
+  it "will not keep any reference to linked link, if link from which has been linked is removed" do
+    c1,c2 = create_contacts(2)
+    link = c1.link_to(c2.absolute_path)
+    link2 = link.link_to(c2.absolute_path)
+    link.destroy.should eq(true)
+    c1.links.size.should eq(1)
+    Ecore::Document.find(@user1_id).filter(:id => link2.id).receive.name.should eq("#{c1.name} 1")
   end
 
 end

@@ -90,6 +90,7 @@ module Ecore
 
     def can_write?(user_id_or_user=nil)
       return false unless @acl_write
+      return true if @user_id == Ecore::User.system_id
       if user_id_or_user
         user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
       else

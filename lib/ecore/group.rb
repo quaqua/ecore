@@ -18,9 +18,7 @@ module Ecore
     # Shows the group's members
     # returns an array of Ecore::User of this group
     def users
-      r = Ecore::User.find(@user_id, :group_ids.like("%#{@id}%")).receive(:all)
-      puts r.inspect
-      r
+      Ecore::User.find(@user_id, :group_ids.like("%#{@id}%")).receive(:all)
     end
 
 

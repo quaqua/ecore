@@ -93,22 +93,40 @@ module Ecore
     #
     # parameters:
     #
-    # * <tt>reverse</tt> - Reverse the order of the ancestors. Default = false (starting with root ancestor)
-    # * <tt>reload</tt> - flush cache and reload ancestors from repository
+    # * <tt>reverse</tt> - <b>[DEPRECATED]</b> Reverse the order of the ancestors. Default = false (starting with root ancestor)
+    # * <tt>reload</tt> - <b>[DEPRECATED]</b> flush cache and reload ancestors from repository
     # * <tt>options</tt>
-    #   * <tt>:type</tt> - Ecore::Document type to be looked up only
-    #   * <tt>:include_self</tt> - include this document in returned array
+    #   * <tt>:type</tt> - Ecore::Document type to be looked up only default: nil (takes any doucment into account)
+    #   * <tt>:include_self</tt> - include this document in returned array default: false
+    #   * <tt>:reload</tt> - flush cache and perform a new query default: false
+    #   * <tt>:reverse</tt> - return reversed order default: false
+    #   * <tt>:get_dataset</tt> - returns the dataset without performing the query yet
     #
     # example:
     #   doc.ancestors
     #   # => [parent_of_parent,parent_doc]
     #
-    #   doc.ancestors(:reverse)
+    #   doc.ancestors(nil,nil, :reverse => true)
     #   # => [parent_doc,parent_of_parent]
     #
     def ancestors(reverse=nil,reload=nil,options={})
+      reload = options[:reload] if options[:reload]
       return @ancestors_cache if @ancestors_cache && reload.nil?
-      p = path.split('/')
+      p = path.split('/').inject([]){ |arr,id| arr << id if (id != "") ; arr }
+      tmp = []
+      if options[:type]
+        tmp = options[:type].find(user_id).where(:id => p)
+      else
+        tmp = Ecore::Document.find(user_id).where(:id => p)
+      end
+      tmp = tmp.receive(:all) unless options[:get_dataset]
+      @ancestors_cache = p.inject([]){ |arr,id| arr << nil }
+      tmp.each { |d| @ancestors_cache[p.index(d.id)] = d }
+      @ancestors_cache = @ancestors_cache.inject([]){ |arr,a| arr << a unless a.nil? ; arr }
+      @ancestors_cache << self if options[:include_self]
+      @ancestors_cache.reverse! if reverse == :reverse || options[:reverse]
+      @ancestors_cache
+=begin
       @ancestors_cache = p.inject([]) do |arr,doc_id|
         if doc_id and !doc_id.empty?
           user_id = (@group_ids || @user_id)
@@ -125,6 +143,7 @@ module Ecore
       @ancestors_cache << self if options[:include_self]
       @ancestors_cache.reverse! if reverse == :reverse
       @ancestors_cache
+=end
     end
 
   end

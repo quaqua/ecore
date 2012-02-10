@@ -121,12 +121,22 @@ module Ecore
       Ecore::db[:users].store_preconditions(user_id,nil,nil,self,nil).filter(options)
     end
 
+    # creates a sequel dataset which includes all important fields filled
+    # with given query and LIKE conditions
+    #
+    # This does not perform the actual database query in sequel yet.
+    # and invokes Ecore::User.find as usual (but with prepared queries added)
+    def self.find_with_query(user_id_or_user, q)
+      find(user_id_or_user).where("lower(name) LIKE '%#{q}%' OR email LIKE '%#{q}%' OR fullname LIKE '%#{q}%'")
+    end
+
     # finds a user by user_id
     #
     # * <tt>user_id</tt> - the user id of the user to find in the repository
     #
     def self.first(user_id)
       return anybody if user_id == anybody_id
+      return system if user_id == system_id
       user_hash = Ecore::db[:users].first(:id => user_id) if user_id.is_a?(String)
       if user_id.is_a?(Hash)
         user_id.merge!(:hashed_password => encrypt_password(user_id.delete(:password))) if user_id.has_key?(:password)

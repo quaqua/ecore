@@ -47,6 +47,7 @@ module Ecore
       if attrs.is_a?(Hash) && attrs.keys.size > 0
         attrs.each_pair do |name, val|
           next if name == :type
+          next if name == :name
           send(:"#{name}=", val)
         end
       end
@@ -55,6 +56,8 @@ module Ecore
 
     def update_orig_document
       if changed_attributes
+        changed_attributes.delete(:name)
+        return if changed_attributes.size < 1
         Ecore::db[self.orig_document_type.underscore.pluralize.to_sym].filter(:id => self.orig_document_id).update(changed_attributes)
       end
     end

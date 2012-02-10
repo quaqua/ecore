@@ -158,11 +158,11 @@ module Ecore
     # which is looking for a valid id.
     #
     def new_record?
-      @created_at.nil? # TODO: use case: skip timestamps ???
+      @id.nil? # @created_at.nil? # TODO: use case: skip timestamps ???
     end
 
     # save dataset to database
-    def save
+    def save(options={})
       success = false
       return false unless run_validations
       this_new_record = new_record?
@@ -171,7 +171,7 @@ module Ecore
         run_hooks(:before,:save)
         @id = self.class.gen_unique_id
         init_default_attrs
-        Ecore::db[self.class.table_name].insert(attributes.merge(:id => @id, :created_at => Time.now, :created_by => @user_id, :updated_by => @user_id))
+        Ecore::db[self.class.table_name].insert(attributes.merge(:id => @id, :created_at => @created_at, :created_by => @user_id, :updated_by => @user_id))
         success = true
       else
         run_hooks(:before,:save)
@@ -181,7 +181,7 @@ module Ecore
         Ecore::db[self.class.table_name].where(:id => @id).update(save_attrs)
         success = true
       end
-      Ecore::Audit.log(@id, self.class.name, audit_name, audit_save_action_name, (@user_id || Ecore::User.anybody_id)) unless self.class.skip_audit?
+      Ecore::Audit.log(@id, self.class.name, audit_name, audit_save_action_name, (@user_id || Ecore::User.anybody_id)) if !options[:skip_audit] && !self.class.skip_audit?
       run_hooks(:after,:create) if this_new_record
       run_hooks(:after,:update) unless this_new_record
       run_hooks(:after,:save)
@@ -189,11 +189,11 @@ module Ecore
     end
 
     # updates an entry with given attributes
-    def update(attrs)
+    def update(attrs,options={})
       attrs.each_pair do |key, value|
         send("#{key}=",value)
       end
-      save
+      save(options)
     end
 
     # deletes a datset
@@ -231,7 +231,7 @@ module Ecore
       @path = "" if @path.nil?
       @label_ids = ""
       @type = self.class.get_type_if_has_superclass
-      @created_at = Time.now
+      @created_at ||= Time.now
       @updated_at = Time.now
       @created_by = @user_id
       @updated_by = @user_id

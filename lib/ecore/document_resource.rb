@@ -368,11 +368,13 @@ module Ecore
     end
 
     # updates a document by taking a hash with attributes that should get udpated
-    def update(attrs)
+    # same options can be applied as to
+    # save method
+    def update(attrs, options={})
       attrs.each_pair do |key, value|
         send("#{key}=",value)
       end
-      save
+      save(options)
     end
 
     # destroys (moves) a document to the trash

@@ -14,13 +14,18 @@ module Sequel
       user_id = user_id.id_and_group_ids if user_id.is_a?(Ecore::User)
       @user_id = user_id
       return self if @custom_repository_class = custom_class
-      stmt = "acl_read LIKE '%#{Ecore::User.anybody_id}%'"
-      if user_id.include?(',')
-        user_id.split(',').each do |uid|
-          stmt << " OR acl_read LIKE '%#{uid}%'"
-        end
+      stmt = nil
+      if user_id == Ecore::User.system_id || user_id == Ecore::User.system
+        stmt = "1==1"
       else
-        stmt << " OR acl_read LIKE '%#{user_id}%'"
+        stmt = "acl_read LIKE '%#{Ecore::User.anybody_id}%'"
+        if user_id.include?(',')
+          user_id.split(',').each do |uid|
+            stmt << " OR acl_read LIKE '%#{uid}%'"
+          end
+        else
+          stmt << " OR acl_read LIKE '%#{user_id}%'"
+        end
       end
       additional_options.delete(:hidden) if additional_options[:hidden] == true
       ds = where(stmt).where(additional_options)

@@ -40,23 +40,26 @@ module Ecore
     def setup_orig_document_attributes
       return if new_record?
       self.orig_document_type.constantize.db_setup_attributes.each_pair do |name, type_options|
-        next if [:name, :id].include? name
+        next if no_overrides.include? name
         self.class.create_attribute_methods(name, type_options[0], type_options[1], true)
       end
       attrs = Ecore::db[self.orig_document_type.underscore.pluralize.to_sym].first(:id => self.orig_document_id)
       if attrs.is_a?(Hash) && attrs.keys.size > 0
         attrs.each_pair do |name, val|
-          next if [:type, :name, :id].include? name
+          next if no_overrides.include? name
           send(:"#{name}=", val)
         end
       end
       @changed_attributes = nil
     end
 
+    def no_overrides
+      [:type, :name, :id, :path, :tags, :starred, :label_ids, :position, :updated_at, :updated_by, :acl_read, :acl_write, :acl_delete, :hidden]
+    end
+
     def update_orig_document
       if changed_attributes
-        changed_attributes.delete(:name)
-        changed_attributes.delete(:id)
+        no_overrides.each {|noattr| changed_attributes.delete(noattr) }
         return if changed_attributes.size < 1
         Ecore::db[self.orig_document_type.underscore.pluralize.to_sym].filter(:id => self.orig_document_id).update(changed_attributes)
       end

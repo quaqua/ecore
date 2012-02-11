@@ -44,11 +44,5 @@ module Ecore
       @links_chache = query.order(:name,:created_at).receive(:all)
     end
 
-    private
-
-    def destroy_link
-      Ecore::db[:"ecore/links"].filter(:orig_document_id => @id).delete
-    end
-
   end
 end

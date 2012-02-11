@@ -53,7 +53,6 @@ module Ecore
         attribute :hidden, :boolean, :default => @hidden
 
         validate :presence, :name
-        after :destroy, :destroy_link
       end
 
       def migrate(options={:versions => false, :trash => false})
@@ -87,6 +86,7 @@ module Ecore
             index   :type
             index   :name
             index   :path
+            index   :starred
             index   :acl_read
             index   :label_ids
             index   :tags
@@ -117,6 +117,7 @@ module Ecore
             index   :id
             index   :updated_at
             index   :path
+            index   :starred
 
             attrs.each_pair do |name, arr|
               column name, :text, arr[1] if arr[0] == :text
@@ -146,6 +147,7 @@ module Ecore
 
             index   :updated_at
             index   :path
+            index   :starred
             index   :deleted_at
             index   :deleted_by
 
@@ -297,7 +299,7 @@ module Ecore
                                                           :tags => @tags,
                                                           :updated_at => @updated_at,
                                                           :updated_by => @updated_by))
-            Ecore::db[:documents].insert(:id => @id, :type => self.class.name, :name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :path => @path, :label_ids => @label_ids, :tags => @tags, :hidden => @hidden, :position => @position)
+            Ecore::db[:documents].insert(:id => @id, :type => self.class.name, :name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :starred => @starred, :path => @path, :label_ids => @label_ids, :tags => @tags, :hidden => @hidden, :position => @position)
             Ecore::Audit.log(@id, self.class.name, @name, "created", @user_id) unless options[:skip_audit]
             @changed_attributes = nil
             run_custom_transactions(:append)
@@ -320,7 +322,7 @@ module Ecore
                                                                             :tags => @tags,
                                                                             :updated_at => Time.now,
                                                                             :updated_by => @user_id))
-            Ecore::db[:documents].where(:id => @id).update(:name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :path => @path, :label_ids => @label_ids, :tags => @tags, :hidden => @hidden, :position => @position)
+            Ecore::db[:documents].where(:id => @id).update(:name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :starred => @starred, :path => @path, :label_ids => @label_ids, :tags => @tags, :hidden => @hidden, :position => @position)
             if @acl_changed && @acl_changed.is_a?(Array)
               Ecore::Document.find(@group_ids || @user_id).where(:path.like("#{absolute_path}%")).receive(:all).each do |child|
                 @acl_changed.each do |acl|
@@ -409,6 +411,10 @@ module Ecore
           children(:reload => true, :preconditions => {:hidden => true}).each do |child|
             raise(SavingFaild, "could not destroy #{child.name}") unless child.destroy(options)
           end unless is_a?(Ecore::Link)
+          Ecore::db[:"ecore/links"].filter(:orig_document_id => @id).each do |link|
+            Ecore::db[:documents].filter(:id => link[:id]).delete
+            Ecore::db[:"ecore/links"].filter(:id => link[:id]).delete
+          end
           success = true
         end 
       end

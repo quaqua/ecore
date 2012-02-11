@@ -1,10 +1,13 @@
 Version 2.1.1 - 2012-02-10
-  - Links improved
+  - Links improved (and tested)
   - Ecore::User.system to be used as a "can-see everything"-user (if automated creation of objects is desired)
+  - starred added to document's default attributes
+  - important bugfix for share! method (did not add delete, if passed)
 
 Version 2.1 - 2011-12-08
   - Links
   - Access Control
+  - Tags added to document default attributes
   
 Version 2 - 2011-11-30
   - REDESIGNED whole structure to use sequel (no more active record)

@@ -74,8 +74,8 @@ describe "Document hooks" do
 
   it "runs a hook after destroy" do
     ha = HookA.new(@user1_id, :name => 'a')
-    HookA.hooks[:after][:destroy].size.should == 2 # one inside orig document_resource
-    HookA.hooks[:after][:destroy].should == {:increase_a => {}, :destroy_link => {}}
+    HookA.hooks[:after][:destroy].size.should == 1 # one inside orig document_resource
+    HookA.hooks[:after][:destroy].should == {:increase_a => {}}
     ha.run_hooks(:after,:destroy)
     ha.a.should == 1
   end

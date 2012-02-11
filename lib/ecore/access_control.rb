@@ -29,6 +29,7 @@ module Ecore
     #   # => true # still only got 'r' access
     #
     def share(user_id_or_user, privileges='rw')
+      puts "GOT REQUEST TO SHARE #{user_id_or_user.name} with #{privileges}"
       return false unless can_write?
       user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
       privileges = 'r' if user_id == 0
@@ -37,11 +38,12 @@ module Ecore
       set_privileges_for(user_id, :acl_delete, privileges.include?('d'))
       @acl_changed ||= []
       @acl_changed << {:user_or_id => user_id_or_user, :privileges => privileges}
+      puts "ACL CHANGED ARE NOW: #{@acl_write.inspect} DELETE: #{@acl_delete.inspect}"
       true
     end
 
     def share!(user_id_or_user, privileges='rw')
-      return save if share(user_id_or_user, privileges='rw')
+      return save if share(user_id_or_user, privileges)
       false
     end
 

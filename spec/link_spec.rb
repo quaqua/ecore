@@ -61,7 +61,16 @@ describe "Document Links" do
     link = Ecore::Document.find(@user1_id).where(:id => link_id).receive
     link.id.should eq(link_id)
     link.name.should eq("L1")
-    
+  end
+
+  it "will return own path and tags for link (not original one's)" do
+    c1,c2 = create_contacts(2)
+    link = c1.link_to(c2.absolute_path, :name => "L1")
+    link.tags = "a,b,c"
+    link.save.should eq(true)
+    link = Ecore::Document.find(@user1_id).where(:id => link.id).receive
+    link.tags.should eq("a,b,c")
+    link.path.should eq(c2.absolute_path)
   end
 
   it "will not affect original document if link is deleted" do

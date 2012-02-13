@@ -112,6 +112,7 @@ module Ecore
     def ancestors(reverse=nil,reload=nil,options={})
       reload = options[:reload] if options[:reload]
       return @ancestors_cache if @ancestors_cache && reload.nil?
+      user_id = (@group_ids || @user_id)
       p = path.split('/').inject([]){ |arr,id| arr << id if (id != "") ; arr }
       tmp = []
       if options[:type]

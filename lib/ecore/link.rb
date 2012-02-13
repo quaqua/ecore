@@ -18,6 +18,7 @@ module Ecore
 
     after :initialize, :setup_orig_document_attributes
     before :update, :update_orig_document
+    after :create, :setup_document_link_type
 
     # Overwrite default reload function and set original values again as well
     def reload
@@ -63,6 +64,10 @@ module Ecore
         return if changed_attributes.size < 1
         Ecore::db[self.orig_document_type.underscore.pluralize.to_sym].filter(:id => self.orig_document_id).update(changed_attributes)
       end
+    end
+
+    def setup_document_link_type
+      Ecore::db[:documents].filter(:id => @id).update(:link_type => @orig_document_type)
     end
 
   end

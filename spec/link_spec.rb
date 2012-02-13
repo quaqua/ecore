@@ -143,4 +143,11 @@ describe "Document Links" do
     Ecore::Document.find(@user1_id).filter(:id => link2.id).receive.name.should eq("#{c1.name} 1")
   end
 
+  it "will keep document.link_type to make links visible on document layer (for fast lookup of document types e.g. Contact && Links to Contact)" do
+    c1,c2 = create_contacts(2)
+    link = c1.link_to(c2.absolute_path)
+    Ecore::Document.find(@user1_id).filter(:type => "Contact").count.should eq(2)
+    Ecore::Document.find(@user1_id).filter([[:type, "Contact"], [:link_type, "Contact"]].sql_or).count.should eq(3)
+  end
+
 end

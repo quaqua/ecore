@@ -17,9 +17,11 @@ module Ecore
         String  :updated_by, :null => false
         String  :label_ids, :default => ""
         String  :tags, :default => ""
+        String  :link_type
         column  :starred, :boolean, :default => false
         column  :hidden, :boolean
         index :type
+        index :link_type
         index :name
         index :acl_read
         index :path
@@ -41,6 +43,7 @@ module Ecore
         String  :deleted_by, :null => false
         String  :label_ids, :default => ""
         String  :tags, :default => ""
+        String  :link_type
         column  :hidden, :boolean
         column  :position, :integer
         index :type

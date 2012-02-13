@@ -29,7 +29,6 @@ module Ecore
     #   # => true # still only got 'r' access
     #
     def share(user_id_or_user, privileges='rw')
-      puts "GOT REQUEST TO SHARE #{user_id_or_user.name} with #{privileges}"
       return false unless can_write?
       user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
       privileges = 'r' if user_id == 0

@@ -37,7 +37,6 @@ module Ecore
       set_privileges_for(user_id, :acl_delete, privileges.include?('d'))
       @acl_changed ||= []
       @acl_changed << {:user_or_id => user_id_or_user, :privileges => privileges}
-      puts "ACL CHANGED ARE NOW: #{@acl_write.inspect} DELETE: #{@acl_delete.inspect}"
       true
     end
 

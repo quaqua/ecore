@@ -106,7 +106,8 @@ module Ecore
               :host => Ecore::env.get(:db)[:host],
               :user => Ecore::env.get(:db)[:user],
               :password => Ecore::env.get(:db)[:password],
-              :encoding => (Ecore::env.get(:db)[:encoding] || 'utf8')}
+              :encoding => (Ecore::env.get(:db)[:encoding] || 'utf8'),
+              :socket => Ecore::env.get(:db)[:socket]}
           end
         end
         if Ecore::env.get(:db) && Ecore::env.get(:db)[:database]

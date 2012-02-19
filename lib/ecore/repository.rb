@@ -105,7 +105,8 @@ module Ecore
             @connection_settings = { :adapter => Ecore::env.get(:db)[:adapter],
               :host => Ecore::env.get(:db)[:host],
               :user => Ecore::env.get(:db)[:user],
-              :password => Ecore::env.get(:db)[:password]}
+              :password => Ecore::env.get(:db)[:password],
+              :encoding => (Ecore::env.get(:db)[:encoding] || 'utf8')}
           end
         end
         if Ecore::env.get(:db) && Ecore::env.get(:db)[:database]

@@ -185,7 +185,7 @@ module Ecore
         @updated_at = Time.now
         Ecore::db[:users].insert(attributes.merge(:id => @id, :group => (self.class == Ecore::Group)))
         @changed_attributes = nil
-        Ecore::Audit.log(@id, self.class.name, @name, "created", @user_id)
+        Ecore::Audit.log(@id, self.class.name, nil, @name, "created", @user_id)
         success = true
       else # if not new record
         run_hooks(:before,:update)
@@ -196,7 +196,7 @@ module Ecore
         save_attrs.delete(:id)
         @updated_at = Time.now
         Ecore::db[:users].where(:id => @id).update(save_attrs)
-        Ecore::Audit.log(@id, self.class.name, @name, "updated", @user_id, @changed_attributes.inspect) unless @skip_audit
+        Ecore::Audit.log(@id, self.class.name, nil, @name, "updated", @user_id, @changed_attributes.inspect) unless @skip_audit
         @changed_attributes = nil
         success = true
       end 

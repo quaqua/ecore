@@ -300,7 +300,7 @@ module Ecore
                                                           :updated_at => @updated_at,
                                                           :updated_by => @updated_by))
             Ecore::db[:documents].insert(:id => @id, :type => self.class.name, :name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :starred => @starred, :path => @path, :label_ids => @label_ids, :tags => @tags, :hidden => @hidden, :position => @position)
-            Ecore::Audit.log(@id, self.class.name, @name, "created", @user_id) unless options[:skip_audit]
+            Ecore::Audit.log(@id, self.class.name, @path, @name, "created", @user_id) unless options[:skip_audit]
             @changed_attributes = nil
             run_custom_transactions(:append)
             success = true
@@ -345,7 +345,7 @@ module Ecore
                 child.save
               end
             end
-            Ecore::Audit.log(@id, self.class.name, @name, "updated", @user_id, @changed_attributes.inspect) unless options[:skip_audit]
+            Ecore::Audit.log(@id, self.class.name, @path, @name, "updated", @user_id, @changed_attributes.inspect) unless options[:skip_audit]
             @changed_attributes = nil
             run_custom_transactions(:append)
             success = true
@@ -415,6 +415,7 @@ module Ecore
             Ecore::db[:documents].filter(:id => link[:id]).delete
             Ecore::db[:"ecore/links"].filter(:id => link[:id]).delete
           end
+          Ecore::Audit.log(@id, self.class.name, @path, @name, "deleted", @user_id) unless options[:skip_audit]
           success = true
         end 
       end
@@ -429,7 +430,7 @@ module Ecore
     end
 
     # restores a document
-    def restore
+    def restore(options={})
       success = false
       begin
         Ecore::db.transaction do
@@ -445,6 +446,7 @@ module Ecore
             Ecore::db[:"#{table_name}_trash"].where(:id => @id).delete
             Ecore::db[:documents_trash].where(:id => @id).delete
           end
+          Ecore::Audit.log(@id, self.class.name, @path, @name, "restored", @user_id) unless options[:skip_audit]
           success = true
         end 
       #rescue StandardError => e

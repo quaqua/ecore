@@ -37,6 +37,7 @@ module Ecore
       set_privileges_for(user_id, :acl_delete, privileges.include?('d'))
       @acl_changed ||= []
       @acl_changed << {:user_or_id => user_id_or_user, :privileges => privileges}
+      Ecore::Audit.log(@id, self.class.name, @path, @name, "shared", @user_id, "account: #{user_id}, privileges: #{privileges}")
       true
     end
 
@@ -63,6 +64,7 @@ module Ecore
       set_privileges_for(user_id, :acl_delete, false)
       @acl_changed ||= []
       @acl_changed << {:user_or_id => user_id_or_user, :removed => true}
+      Ecore::Audit.log(@id, self.class.name, @path, @name, "unshared", @user_id, "account: #{user_id}")
       true
     end
 

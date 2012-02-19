@@ -13,6 +13,7 @@ module Ecore
         String  :user_id, :null => false
         String  :message
         String  :action, :null => false
+        String  :path
         index   :created_at
         index   :id
       end unless Ecore::db.table_exists?(:audits)
@@ -23,15 +24,17 @@ module Ecore
     #
     # * <tt>id</tt> - the id of the object to be logged about
     # * <tt>type</tt> - the type of the object which is logged
+    # * <tt>path</tt> - the path of the object which is logged
     # * <tt>name</tt> - the object's name
     # * <tt>action</tt> - create/update/delete/share/unshare/...
     # * <tt>user_id</tt> - the id of the user who kicked that event
     # * <tt>message</tt> - an additional message
-    def self.log(id, type, name, action, user_id, message=nil)
+    def self.log(id, type, path, name, action, user_id, message=nil)
       Ecore::db[:audits].insert(:id => id,
                                 :type => type,
                                 :name => name,
                                 :action => action,
+                                :path => path,
                                 :user_id => user_id,
                                 :created_at => Time.now,
                                 :message => message)

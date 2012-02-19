@@ -181,7 +181,7 @@ module Ecore
         Ecore::db[self.class.table_name].where(:id => @id).update(save_attrs)
         success = true
       end
-      Ecore::Audit.log(@id, self.class.name, audit_name, audit_save_action_name, (@user_id || Ecore::User.anybody_id)) if !options[:skip_audit] && !self.class.skip_audit?
+      Ecore::Audit.log(@id, self.class.name, @path, audit_name, audit_save_action_name, (@user_id || Ecore::User.anybody_id)) if !options[:skip_audit] && !self.class.skip_audit?
       run_hooks(:after,:create) if this_new_record
       run_hooks(:after,:update) unless this_new_record
       run_hooks(:after,:save)

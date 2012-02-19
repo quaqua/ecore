@@ -15,6 +15,7 @@ module Ecore
         String  :action, :null => false
         String  :path
         index   :created_at
+        index   :path
         index   :id
       end unless Ecore::db.table_exists?(:audits)
     end

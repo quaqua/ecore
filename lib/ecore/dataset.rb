@@ -16,7 +16,7 @@ module Sequel
       return self if @custom_repository_class = custom_class
       stmt = nil
       if user_id == Ecore::User.system_id || user_id == Ecore::User.system
-        stmt = "1==1"
+        stmt = "1=1"
       else
         stmt = "acl_read LIKE '%#{Ecore::User.anybody_id}%'"
         if user_id.include?(',')

@@ -315,14 +315,17 @@ module Ecore
             save_attrs.delete(:created_at)
             save_attrs.delete(:type)
             save_attrs.delete(:id)
+            save_attrs.merge(:updated_at => Time.now) unless options[:keep_udpated_at]
+            save_attrs.merge(:updated_by => @user_id) unless options[:keep_udpated_by]
             Ecore::db[table_name].where(:id => @id).update(save_attrs.merge(:acl_read => @acl_read, 
                                                                             :acl_write => @acl_write, 
                                                                             :acl_delete => @acl_delete, 
                                                                             :label_ids => @label_ids,
-                                                                            :tags => @tags,
-                                                                            :updated_at => Time.now,
-                                                                            :updated_by => @user_id))
-            Ecore::db[:documents].where(:id => @id).update(:name => @name, :updated_at => Time.now, :updated_by => @user_id, :acl_read => @acl_read, :starred => @starred, :path => @path, :label_ids => @label_ids, :tags => @tags, :hidden => @hidden, :position => @position)
+                                                                            :tags => @tags))
+            doc_attrs = {:name => @name, :acl_read => @acl_read, :starred => @starred, :path => @path, :label_ids => @label_ids, :tags => @tags, :hidden => @hidden, :position => @position}
+            doc_attrs.merge(:updated_at => Time.now) unless options[:keep_udpated_at]
+            doc_attrs.merge(:updated_by => @user_id) unless options[:keep_udpated_by]
+            Ecore::db[:documents].where(:id => @id).update(doc_attrs)
             if @acl_changed && @acl_changed.is_a?(Array)
               Ecore::Document.find(@group_ids || @user_id).where(:path.like("#{absolute_path}%")).receive(:all).each do |child|
                 @acl_changed.each do |acl|

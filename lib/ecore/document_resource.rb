@@ -41,7 +41,7 @@ module Ecore
         attribute :name, :string, :null => false
         attribute :color, :string
         attribute :starred, :boolean, :default => false
-        attribute :position, :integer, :default => 0
+        attribute :position, :integer, :default => 999
         attribute :path, :string, :default => ""
 
         attribute :created_at, :datetime, :default => Time.now

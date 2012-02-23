@@ -144,4 +144,17 @@ describe "Document ACCESS CONTROL" do
     c3.can_delete?(@user1_id).should == true
   end
 
+  it "grants all privileges to admin users" do
+    admin = Ecore::User.create!("SYSTEM", :name => 'admin', :password => 'admin', :role => 'manager')
+    c1,c2 = create_contacts(2)
+    Contact.find(@user2_id).where(:id => c1.id).receive.should eq(nil)
+    Contact.find(admin).where(:id => c1.id).receive.id.should eq(c1.id)
+  end
+
+  it "grants all privileges to system user" do
+    c1,c2 = create_contacts(2)
+    Contact.find(@user2_id).where(:id => c1.id).receive.should eq(nil)
+    Contact.find(Ecore::User.system).where(:id => c1.id).receive.id.should eq(c1.id)
+  end
+
 end

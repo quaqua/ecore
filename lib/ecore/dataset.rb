@@ -11,11 +11,12 @@ module Sequel
     #
     def store_preconditions(user_id,type,parent=nil,custom_class=nil,additional_options={:hidden => false})
       @parent = parent
+      @user_is_admin = (user_id.is_a?(Ecore::User) && (user_id.id == Ecore::User.system.id || (user_id.role && user_id.role.include?("manager"))))
       user_id = user_id.id_and_group_ids if user_id.is_a?(Ecore::User)
       @user_id = user_id
       return self if @custom_repository_class = custom_class
       stmt = nil
-      if user_id == Ecore::User.system_id || user_id == Ecore::User.system
+      if user_id == Ecore::User.system_id || @user_is_admin
         stmt = "1=1"
       else
         stmt = "acl_read LIKE '%#{Ecore::User.anybody_id}%'"

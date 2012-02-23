@@ -5,6 +5,7 @@ describe "Document ACCESS CONTROL" do
   before(:all) do
     @user1_id = "1a"
     @user2_id = "2b"
+    @admin = Ecore::User.create!(Ecore::User.system, :name => 'admin', :password => 'admin', :role => 'manager') unless @admin = Ecore::User.find(Ecore::User.system, :name => "admin").receive
     Ecore::db.drop_table(:contacts) if Ecore::db.table_exists?(:contacts)
     class Contact
       include Ecore::DocumentResource
@@ -145,16 +146,28 @@ describe "Document ACCESS CONTROL" do
   end
 
   it "grants all privileges to admin users" do
-    admin = Ecore::User.create!("SYSTEM", :name => 'admin', :password => 'admin', :role => 'manager')
     c1,c2 = create_contacts(2)
     Contact.find(@user2_id).where(:id => c1.id).receive.should eq(nil)
-    Contact.find(admin).where(:id => c1.id).receive.id.should eq(c1.id)
+    Contact.find(@admin).where(:id => c1.id).receive.id.should eq(c1.id)
+  end
+
+  it "grants all privileges to admin users (and finds document via Ecore::Document)" do
+    c1,c2 = create_contacts(2)
+    Contact.find(@user2_id).where(:id => c1.id).receive.should eq(nil)
+    Ecore::Document.find(@admin).where(:id => c1.id).receive.id.should eq(c1.id)
   end
 
   it "grants all privileges to system user" do
     c1,c2 = create_contacts(2)
     Contact.find(@user2_id).where(:id => c1.id).receive.should eq(nil)
     Contact.find(Ecore::User.system).where(:id => c1.id).receive.id.should eq(c1.id)
+  end
+
+  it "can share a document before it has been saved (to save processing and queries)" do
+    c = Contact.new(@user1_id, :name => 'test')
+    c.share(@user2_id, 'rw')
+    c.save.should eq(true)
+    Contact.find(@user2_id).where(:id => c.id).receive.id.should eq(c.id)
   end
 
 end

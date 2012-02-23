@@ -1,3 +1,7 @@
+Version 2.1.2 - 2012-02-23
+  - Users with "manager" role can see and administrate everything
+  - share method can be used even if object has not been saved yet (stores queries)
+
 Version 2.1.1 - 2012-02-10
   - Links improved (and tested)
   - Ecore::User.system to be used as a "can-see everything"-user (if automated creation of objects is desired)

@@ -106,9 +106,9 @@ describe "Document main functionality" do
 
   it "creates acl entries for creator" do
     john = Contact.new(@user1_id, :name => 'test')
-    john.can_read?.should == false
-    john.can_write?.should == false
-    john.can_delete?.should == false
+    john.respond_to?(:"can_read?").should eq(true)
+    john.respond_to?(:"can_write?").should eq(true)
+    john.respond_to?(:"can_delete?").should eq(true)
     john.save.should == true
     john.can_read?.should == true
     john.can_write?.should == true

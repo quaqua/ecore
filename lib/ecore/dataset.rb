@@ -11,6 +11,7 @@ module Sequel
     #
     def store_preconditions(user_id,type,parent=nil,custom_class=nil,additional_options={:hidden => false})
       @parent = parent
+      @user_obj = user_id
       @user_is_admin = (user_id.is_a?(Ecore::User) && (user_id.id == Ecore::User.system.id || (user_id.role && user_id.role.include?("manager"))))
       user_id = user_id.id_and_group_ids if user_id.is_a?(Ecore::User)
       @user_id = user_id
@@ -37,16 +38,16 @@ module Sequel
     def receive(all_or_first=:first)
       if all_or_first.to_sym == :all
         if @custom_repository_class
-          all.map{ |u| @custom_repository_class.new(@user_id, u) }
+          all.map{ |u| @custom_repository_class.new(@user_obj, u) }
         else
-          Ecore::DocumentArray.new(@parent, all.map{ |document| get_document(@user_id,document)})
+          Ecore::DocumentArray.new(@parent, all.map{ |document| get_document(@user_obj,document)})
         end
       else
         f = first
         if @custom_repository_class
-          @custom_repository_class.new(@user_id, f) if f
+          @custom_repository_class.new(@user_obj, f) if f
         else
-          get_document(@user_id,f) if f
+          get_document(@user_obj,f) if f
         end
       end
     end

@@ -31,7 +31,7 @@ module Ecore
     def share(user_id_or_user, privileges='rw')
       return false unless can_write?
       user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
-      privileges = 'r' if user_id == 0
+      privileges = 'r' if user_id == Ecore::User.anybody_id
       set_privileges_for(user_id, :acl_read, true)
       set_privileges_for(user_id, :acl_write, privileges.include?('w'))
       set_privileges_for(user_id, :acl_delete, privileges.include?('d'))
@@ -91,6 +91,7 @@ module Ecore
     end
 
     def can_write?(user_id_or_user=nil)
+      return true if new_record? # Problematic?
       return false unless @acl_write
       return true if @user_is_admin
       if user_id_or_user
@@ -137,7 +138,8 @@ module Ecore
     private
 
     def set_privileges_for(user_id, rwd, grant=false)
-      tmp = instance_variable_get("@#{rwd}").split(',')
+      tmp = instance_variable_get("@#{rwd}") || ""
+      tmp = tmp.split(',')
       tmp.delete(user_id)
       tmp << user_id if grant
       instance_variable_set("@#{rwd}",tmp.join(','))

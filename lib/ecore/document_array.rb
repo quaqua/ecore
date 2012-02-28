@@ -29,14 +29,14 @@ module Ecore
     #
     def create(type=self.class, child_attributes={})
       child = build(type,child_attributes)
-      child if push(child)
+      child if push!(child)
     end
 
     # same as create, but raises Ecore::SavingFailed Error if
     # push returns false
     def create!(type=self.class, child_attributes={})
       child = build(type,child_attributes)
-      raise(SavingFailed, child.errors) unless push(child)
+      raise(SavingFailed, child.errors) unless push!(child)
       child
     end
 
@@ -54,19 +54,24 @@ module Ecore
     end
 
     # adds an existing document to this array-holding document
-    #
+    # does not save the child with new parent/path settings yet
     # example:
-    #   mydocument.children.push(childdocument)
-    #   # => true
+    #  mydocument.children.push(childdocument)
+    #  # => childdocument
     #
     def push(child)
       child = setup_new_child_default_values(child)
-      if child.save
-        return super(child)
-      end
-      nil
+      return super(child)
     end
-    alias_method :<<, :push
+
+    # adds an existing document to this array-holding document
+    # and saves it (with new path settings)
+    #
+    def push!(child)
+      child = setup_new_child_default_values(child)
+      return push(child) if child.save
+    end
+    alias_method :<<, :push!
 
     private
 

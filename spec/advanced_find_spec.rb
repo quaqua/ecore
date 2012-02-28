@@ -6,7 +6,7 @@ def create_contact
   @c2 = Contact.create!(@u1.id, :name => 'c2')
   @c2.share!(Ecore::User.anybody)
   @c3 = Contact.create!(@u1.id, :name => 'c3')
-  @c1.children.push(@c3)
+  @c1.children.push!(@c3)
 end
 
 describe "Document Advanced finders" do
@@ -51,7 +51,7 @@ describe "Document Advanced finders" do
     c1.acl_delete.should == "#{@u1.id}"
   end
 
-  it "does not modify privileges if changin child content" do
+  it "does not modify privileges if changing child content" do
     @c3.parent.id.should == @c1.id
     c3 = Contact.find(@u2.id_and_group_ids).filter(:id => @c3.id).receive
     c3.position = 3

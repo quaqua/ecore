@@ -1,10 +1,10 @@
 require ::File::expand_path( "../spec_helper", __FILE__ )
 
 def create_tree(a,b,c,d,e)
-  a.children.push(b)
-  a.children.push(c)
-  b.children.push(d)
-  b.children.push(e)
+  a.children.push!(b)
+  a.children.push!(c)
+  b.children.push!(d)
+  b.children.push!(e)
 end
 
 describe "Document Hierarchy" do
@@ -45,7 +45,7 @@ describe "Document Hierarchy" do
   it "adds an existing child document to document a" do
     a,b = create_contacts(2)
     a.children.size.should == 0
-    a.children.push(b).nil?.should == false
+    a.children.push!(b).nil?.should == false
     a.children.size.should == 1
   end
 
@@ -58,7 +58,7 @@ describe "Document Hierarchy" do
 
   it "returns the child's parent_id" do
     a,b = create_contacts(2)
-    a.children.push(b)
+    a.children.push!(b)
     b.reload.parent_id.should == a.id
     b.parent.id.should == a.id
   end
@@ -136,7 +136,7 @@ describe "Document Hierarchy" do
     b.children << c
     b.children.size.should == 1
     c.reload.parent.id.should == b.id
-    a.children.push(c)
+    a.children << c
     b.children(:reload => true).size.should == 0
     c.reload.parent(:reload).id.should == a.id
   end
@@ -147,7 +147,7 @@ describe "Document Hierarchy" do
     b.children << c
     b.children.size.should == 1
     c.reload.parent.id.should == b.id
-    a.children.push(c)
+    a.children << c
     b.children(:reload => true).size.should == 0
     c.reload.parent.id.should == b.id
   end

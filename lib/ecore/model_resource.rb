@@ -24,7 +24,7 @@ module Ecore
       # like created_at, updated_at, ...
       #
       # valid options are
-      #  * <tt>:hierarchy => false</tt> - creates a hierarchy attribute and loads hierarchy mixins (default: false)
+      #  * <tt>:hierarchy => true</tt> - creates a hierarchy attribute and loads hierarchy mixins (default: true)
       #  * <tt>:timestamps => true</tt> - skips the timestamp fileds (created_at, updated_at) (default: true)
       #  * <tt>:userstamps => true</tt> - skips created_by, updated_by and according methods (default: true)
       #  * <tt>:skip_audit => false</tt> - skips auditing for this model (default: false)
@@ -33,6 +33,7 @@ module Ecore
       def default_attributes(options={})
         options[:timestamps] = true unless options.has_key?(:timestamps)
         options[:userstamps] = true unless options.has_key?(:userstamps)
+        options[:hierarchy] = true unless options.has_key?(:hierarchy)
         @skip_audit = options[:skip_audit] ? options[:skip_audit] : false
 
         attribute :path, :string, :default => "" if options[:hierarchy]

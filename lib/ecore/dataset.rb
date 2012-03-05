@@ -54,21 +54,19 @@ module Sequel
 
     private
 
-    def get_document(user_id, document)
+    def get_document(user_obj, document)
       return unless document
       type = document.delete(:type)
       if type && first_source_table == :documents
-        type.constantize.find(user_id, :hidden => true).where(:id => document[:id]).receive
+        type.constantize.find(user_obj, :hidden => true).where(:id => document[:id]).receive
       elsif type && first_source_table == :documents_trash
-        type.constantize.find(user_id, :trashed => true, :hidden => true).where(:id => document[:id]).receive
+        type.constantize.find(user_obj, :trashed => true, :hidden => true).where(:id => document[:id]).receive
       elsif type
-        user_id = user_id.id if user_id.is_a?(Ecore::User)
-        type.constantize.new(user_id,document)
+        type.constantize.new(user_obj,document)
       else
-        user_id = user_id.id if user_id.is_a?(Ecore::User)
         klass = first_source_table.to_s
         klass.sub!("_trash","") if klass.include?("_trash")
-        klass.singularize.classify.constantize.new(user_id,document)
+        klass.singularize.classify.constantize.new(user_obj,document)
       end
     end
 

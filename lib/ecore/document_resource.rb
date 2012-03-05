@@ -258,6 +258,7 @@ module Ecore
     #   MyDoc.new(session[:user_id], :name => 'document')
     # creates a new instance with given id
     def initialize(user_id_or_user, attrs={})
+      @user_obj = user_id_or_user if user_id_or_user.is_a?(Ecore::User)
       if user_id_or_user.is_a?(String) && user_id_or_user.include?(',')
         @user_id = user_id_or_user.split(',').first
         @group_ids = user_id_or_user

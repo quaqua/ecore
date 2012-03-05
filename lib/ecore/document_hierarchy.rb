@@ -77,12 +77,15 @@ module Ecore
     def parent(reload=false)
       return nil if parent_id.nil?
       return @parent_cache if @parent_cache && (reload.to_s != "reload")
-      user_id = @user_id
-      if @group_ids
-        user_id = @group_ids
-      else
-        if u = Ecore::User.first(@user_id)
-          user_id = u.id_and_group_ids
+      user_id = @user_obj
+      unless user_id
+        user_id = @user_id
+        if @group_ids
+          user_id = @group_ids
+        else
+          if u = Ecore::User.first(@user_id)
+            user_id = u.id_and_group_ids
+          end
         end
       end
       @parent_cache = Ecore::Document.find(user_id, :hidden => true).where(:id => parent_id).receive

@@ -41,7 +41,12 @@ module Ecore
                  (val.is_a?(String) && (val == "1" || val.downcase[0,1] == "t")) ||
                  (val.is_a?(Integer) && val == 1)) ? true : false
         elsif Ecore::env.get(:force_encoding) && (type == :string || type == String || type == :text) && !val.nil?
-          val = val.force_encoding Ecore::env.get(:force_encoding)
+          begin
+            val = val.force_encoding Ecore::env.get(:force_encoding)
+          rescue StandardError => e
+            puts "STRING: #{val}"
+            raise e
+          end
         end
         if !@orig_attributes || (!@orig_attributes.has_key?(name.to_sym) || @orig_attributes[name.to_sym] != val)
           @changed_attributes ||= {}

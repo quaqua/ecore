@@ -53,12 +53,15 @@ module Ecore
     # be set without any further effort.
     def parent_id=(p_id)
       return if p_id.nil? || p_id.empty? || p_id == parent_id
-      user_id = @user_id
-      if @group_ids
-        user_id = @group_ids
-      else
-        if u = Ecore::User.first(@user_id)
-          user_id = u.id_and_group_ids
+      user_id = @user_obj
+      unless user_id
+        user_id = @user_id
+        if @group_ids
+          user_id = @group_ids
+        else
+          if u = Ecore::User.first(@user_id)
+            user_id = u.id_and_group_ids
+          end
         end
       end
       @parent_cache = Ecore::Document.find(user_id, :hidden => true).filter(:id => p_id).receive

@@ -32,6 +32,11 @@ module Ecore
       return false unless can_write?
       user_id = self.class.extract_id_from_user_id_or_user(user_id_or_user)
       privileges = 'r' if user_id == Ecore::User.anybody_id
+      if new_record?
+        set_privileges_for(@user_id, :acl_read, true)
+        set_privileges_for(@user_id, :acl_write, true)
+        set_privileges_for(@user_id, :acl_delete, true)
+      end
       set_privileges_for(user_id, :acl_read, true)
       set_privileges_for(user_id, :acl_write, privileges.include?('w'))
       set_privileges_for(user_id, :acl_delete, privileges.include?('d'))
@@ -91,6 +96,7 @@ module Ecore
     end
 
     def can_write?(user_id_or_user=nil)
+      return true if @user_obj && @user_obj.is_admin?
       return true if new_record? # Problematic?
       return false unless @acl_write
       return true if @user_is_admin
@@ -114,6 +120,7 @@ module Ecore
     end
 
     def can_delete?(user_id_or_user=nil)
+      return true if @user_obj && @user_obj.is_admin?
       return false unless @acl_delete
       return true if @user_is_admin
       if user_id_or_user

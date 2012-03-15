@@ -253,7 +253,7 @@ module Ecore
 
     # Returns true, if user's roles include "editor"
     def is_editor?
-      @role.include? "editor"
+      @role.match(/editor|manager/)
     end
 
     # Returns true, if user has been suspended

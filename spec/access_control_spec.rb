@@ -145,6 +145,15 @@ describe "Document ACCESS CONTROL" do
     c3.can_delete?(@user1_id).should == true
   end
 
+  it "inherits privileges correctly from parent" do
+    c1 = create_contacts(1)[0]
+    c1.share!(@user2_id, 'r')
+    Contact.create!(@user1_id, :name => 'c2', :parent_id => c1.id)
+    c2 = c1.children(:reload => true).first
+    c2.can_read?(@user2_id).should eq(true)
+    c2.can_write?(@user2_id).should eq(false)
+  end
+
   it "grants all privileges to admin users" do
     c1,c2 = create_contacts(2)
     Contact.find(@user2_id).where(:id => c1.id).receive.should eq(nil)

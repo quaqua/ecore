@@ -36,6 +36,7 @@ module Ecore
     attribute  :last_login_ip, :string
     attribute  :last_request_at, :datetime
     attribute  :confirmation_key, :string
+    attribute  :email_notifications, :boolean, :default => true
     attribute  :default_locale, :string, :default => "en"
 
     def self.table_name
@@ -248,12 +249,12 @@ module Ecore
 
     # Returns true, if user's roles include "manager"
     def is_admin?
-      @role.include? "manager"
+      @role && @role.include?("manager")
     end
 
     # Returns true, if user's roles include "editor"
     def is_editor?
-      @role.match(/editor|manager/)
+      @role && @role.match(/editor|manager/)
     end
 
     # Returns true, if user has been suspended

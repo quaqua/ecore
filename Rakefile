@@ -15,12 +15,12 @@ namespace :ecore do
   #  t.rcov_opts = '--exclude /gems/,/Library/,/usr/,lib/tasks,.bundle,config,/lib/rspec/,/lib/rspec-'
   #end
 
-  require 'rcov/rcovtask'
-  Rcov::RcovTask.new(:cov) do |cov|
-    cov.test_files = FileList['spec/spec*.rb']
-    cov.rcov_opts << '--exclude gem' << '--exclude spec_helper.rb' #%q[--exclude "gem"]
-    # t.verbose = true     # uncomment to see the executed command
-  end
+  #require 'rcov/rcovtask'
+  #Rcov::RcovTask.new(:cov) do |cov|
+  #  cov.test_files = FileList['spec/spec*.rb']
+  #  cov.rcov_opts << '--exclude gem' << '--exclude spec_helper.rb' #%q[--exclude "gem"]
+  #  # t.verbose = true     # uncomment to see the executed command
+  #end
 
   Rake::RDocTask.new do |rd|
     rd.main = "README.rdoc"

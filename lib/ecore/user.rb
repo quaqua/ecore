@@ -13,7 +13,8 @@ module Ecore
     extend Ecore::UniqueIDGenerator
     extend Ecore::Hooks::ClassMethods
     extend Ecore::Validations::ClassMethods
-    include Ecore::ActiveModelLayer
+    extend Ecore::ActiveModelLayer::ClassMethods
+    include Ecore::ActiveModelLayer::InstanceMethods
     include Ecore::Validations::InstanceMethods
     include Ecore::Hooks::InstanceMethods
 

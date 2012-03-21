@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "simplecov"
   s.add_development_dependency "rdoc"
   s.add_development_dependency "sqlite3"
+  s.add_dependency "activemodel"
   s.add_dependency "activesupport"
   s.add_dependency "sequel"
   s.add_dependency "i18n"

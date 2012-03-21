@@ -1,7 +1,7 @@
 # (c) 2012 by tastenwerk
 # Author: quaqua@tastenwerk.com
 #
-require 'active_model' if defined?(Rails)
+#require 'active_model' if defined?(Rails)
 
 require File::expand_path("../attribute_methods", __FILE__)
 require File::expand_path("../hooks", __FILE__)
@@ -121,12 +121,13 @@ module Ecore
 
     end
 
-    include Ecore::ActiveModelLayer
+    include Ecore::ActiveModelLayer::InstanceMethods
     include Ecore::Validations::InstanceMethods
     include Ecore::CustomTransactions::InstanceMethods
     include Ecore::Hooks::InstanceMethods
     def self.included(model)
       model.extend Ecore::AttributeMethods
+      model.extend Ecore::ActiveModelLayer::ClassMethods
       model.extend ClassMethods
       model.extend Ecore::Hooks::ClassMethods
       model.extend Ecore::Validations::ClassMethods

@@ -8,7 +8,7 @@ module Ecore
 
       # Class level cache for to_partial_path.
       def _to_partial_path
-        @_to_partial_path ||= "#{name.underscore.pluralize}/#{name.underscore.demodulize}".freeze
+        @_to_partial_path ||= "#{name.underscore.pluralize}/#{name.demodulize.underscore}".freeze
       end
     end
 

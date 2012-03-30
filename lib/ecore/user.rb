@@ -80,6 +80,10 @@ module Ecore
       new(nil, :name => "anybody")
     end
 
+    def self.nobody
+      new(nil, :name => "nobody")
+    end
+
     # Returns the system user
     def self.system
       new(nil, :name => "system")
@@ -164,6 +168,8 @@ module Ecore
     #
     def initialize(user_id_or_user,attrs={})
       if attrs[:name] && attrs[:name] == 'anybody'
+        @id = Ecore::User.anybody_id
+      elsif attrs[:name] && attrs[:name] == 'nobody'
         @id = Ecore::User.anybody_id
       elsif attrs[:name] && attrs[:name] == 'system'
         @id = Ecore::User.system_id

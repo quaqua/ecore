@@ -239,7 +239,7 @@ module Ecore
       @classes
     end
 
-    attr_reader :attributes, :orig_attributes, :changed_attributes, :user_id
+    attr_reader :attributes, :orig_attributes, :changed_attributes, :user_id, :user_obj
     attr_accessor :id, :acl_read, :acl_write, :acl_delete, :label_ids, :tags, :deleted_by, :deleted_at
 
     def table_name
@@ -468,7 +468,7 @@ module Ecore
 
     # returns the updated_by as an Ecore::User object
     def updater
-      Ecore::User.first(@updated_by)
+      Ecore::User.first(@updated_by) || Ecore::User.nobody
     end
 
     # returns the created_by field as an Ecore::User object

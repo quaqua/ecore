@@ -60,7 +60,7 @@ module Ecore
           user_id = @group_ids
         else
           if u = Ecore::User.first(@user_id)
-            user_id = u.id_and_group_ids
+            user_id = u
           end
         end
       end
@@ -69,11 +69,12 @@ module Ecore
       self.path = @parent_cache.absolute_path
       @path_changed = self.path
       @acl_read = @parent_cache.acl_read
-      @acl_read << ",#{@user_id}" unless @acl_read.include?(@user_id)
+      uid = (@user_obj ? @user_obj.id : user_id)
+      @acl_read << ",#{uid}" unless @acl_read.include?(uid)
       @acl_write = @parent_cache.acl_write
-      @acl_write << ",#{@user_id}" unless @acl_write.include?(@user_id)
+      @acl_write << ",#{uid}" unless @acl_write.include?(uid)
       @acl_delete = @parent_cache.acl_delete
-      @acl_delete << ",#{@user_id}" unless @acl_delete.include?(@user_id)
+      @acl_delete << ",#{uid}" unless @acl_delete.include?(uid)
     end
 
     # returns the document's parent
@@ -118,7 +119,7 @@ module Ecore
     def ancestors(reverse=nil,reload=nil,options={})
       reload = options[:reload] if options[:reload]
       return @ancestors_cache if @ancestors_cache && reload.nil?
-      user_id = (@group_ids || @user_id)
+      user_id = (@user_obj || @group_ids || @user_id)
       p = path.split('/').inject([]){ |arr,id| arr << id if (id != "") ; arr }
       tmp = []
       if options[:type]

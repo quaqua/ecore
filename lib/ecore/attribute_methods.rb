@@ -22,6 +22,7 @@ module Ecore
     def create_attribute_methods(name, type, options, link=false)
       send(:define_method, :"#{name}=", lambda{ |val|
         if type == :integer || type == Fixnum
+          val = nil if val.is_a?(String) && val.empty?
           val = val.to_i if val.is_a?(String) && val.match(/^\d+$/)
         elsif type == :float || type == :double || type == Float
           val = val.sub(',','.').to_f if val.is_a?(String) && val.match(/^\d+[\.,\,]{0,1}\d*$/)

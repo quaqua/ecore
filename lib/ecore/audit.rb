@@ -38,7 +38,7 @@ module Ecore
                                 :path => path,
                                 :user_id => user_id,
                                 :created_at => Time.now,
-                                :message => message)
+                                :message => (message.size > 255 ? message[0..255] : message))
       File.open((Ecore::env.get(:audit_logfile) || 'audit.log'),'a'){ |f| f.write("#{Time.now.strftime('%Y-%m-%d %H:%M:%s')} - ID:#{id}, TYPE:#{type}, NAME:#{name}, ACTION:#{action}, USER_ID:#{user_id}, MESSAGE:#{message}\n") }
     end
   end

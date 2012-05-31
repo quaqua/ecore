@@ -122,6 +122,7 @@ module Ecore
             @db = Sequel.connect(@connection_settings)
           end
         else
+          puts "connecting with #{@connection_settings}"
           @db = Sequel.connect(@connection_settings)
         end
       end

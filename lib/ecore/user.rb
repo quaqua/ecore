@@ -143,12 +143,15 @@ module Ecore
     def self.first(user_id)
       return anybody if user_id == anybody_id
       return system if user_id == system_id
+      puts "trying to fetch user id #{user_id}"
       user_hash = Ecore::db[:users].first(:id => user_id) if user_id.is_a?(String)
+      puts user_hash
       if user_id.is_a?(Hash)
         user_id.merge!(:hashed_password => encrypt_password(user_id.delete(:password))) if user_id.has_key?(:password)
         user_hash = Ecore::db[:users].first(user_id)  
         user_id = nil
       end
+      puts "got user #{user_hash}"
       new(user_id, user_hash) if user_hash
     end
 

@@ -41,6 +41,8 @@ module Ecore
         attribute :starred, :boolean, :default => false
         attribute :position, :integer, :default => 999
         attribute :path, :string, :default => ""
+        attribute :locked_by, :string
+        attribute :locked_at, :datetime
 
         attribute :created_at, :datetime, :default => Time.now
         attribute :created_by, :string
@@ -277,6 +279,8 @@ module Ecore
     #  * <tt>:skip_audit</tt> - Boolean. Skips audit logging. This can be useful, if save is called multiple times for a similar action
     def save(options={})
       raise StandardError, "table does not exist yet in the database (run #{self.class.table_name.to_s.classify}.migrate)" unless Ecore::db.table_exists?(table_name)
+      puts " WE ARE HAVING ID: #{@user_obj.inspect}"
+      return false if !new_record? && @user_obj && @user_obj.id && self.locked_by && @user_obj.id != self.locked_by
       return false unless run_validations
       this_new_record = new_record?
       success = false

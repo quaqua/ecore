@@ -11,6 +11,8 @@ module Ecore
         String  :type, :null => false
         String  :name, :null => false
         String  :acl_read, :null => false
+        column  :locked_by, :string
+        column  :locked_at, :datetime
         column  :updated_at, :datetime, :null => false
         String  :path, :null => false
         column  :position, :integer
@@ -35,6 +37,8 @@ module Ecore
         String  :type, :null => false
         String  :name, :null => false
         String  :acl_read, :null => false
+        column  :locked_by, :string
+        column  :locked_at, :datetime
         column  :updated_at, :datetime, :null => false
         String  :path, :null => false
         String  :updated_by, :null => false
